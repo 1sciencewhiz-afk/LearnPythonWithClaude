@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ track.title }} - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap section">
+  <p class="crumbs"><a href="{{ url_for('learn.tracks') }}">Tracks</a> / {{ track.title }}</p>
+  <h1>{{ track.emoji }} {{ track.title }}</h1>
+  <p class="muted">{{ track.blurb }}</p>
+
+  <progress class="progress-bar narrow {% if summary.percent == 100 %}is-done{% endif %}"
+            value="{{ summary.percent }}" max="100"
+            aria-label="Track progress">{{ summary.percent }}%</progress>
+  <p class="faint mb-lg" >{{ summary.done }} of {{ summary.total }} lessons complete</p>
+
+  <ul class="lesson-list">
+    {% for entry in lessons %}
+      {% if entry.unlocked %}
+        <a class="lesson-item {% if entry.done %}is-done{% endif %}" href="{{ url_for('learn.lesson', lesson_slug=entry.lesson.slug) }}">
+          <span class="lesson-num" aria-hidden="true">{{ "✓" if entry.done else loop.index }}</span>
+          <span class="lesson-body">
+            <strong>{{ entry.lesson.title }}</strong>
+            <span class="lesson-meta">{{ entry.lesson.goal }}</span>
+            <span class="lesson-meta">{{ entry.lesson.minutes }} min &middot; {{ entry.lesson.xp }} XP{% if entry.row and entry.row.attempts %} &middot; {{ entry.row.attempts }} attempt{{ '' if entry.row.attempts == 1 else 's' }}{% endif %}</span>
+          </span>
+          <span class="lesson-status">{{ "Done" if entry.done else "Open" }}</span>
+        </a>
+      {% else %}
+        <li class="lesson-item is-locked" aria-disabled="true">
+          <span class="lesson-num" aria-hidden="true">&#128274;</span>
+          <span class="lesson-body">
+            <strong>{{ entry.lesson.title }}</strong>
+            <span class="lesson-meta">Finish the lesson above to unlock this one.</span>
+          </span>
+          <span class="lesson-status">Locked</span>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

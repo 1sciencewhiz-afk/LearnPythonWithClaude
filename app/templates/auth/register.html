@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Create an account - {{ site_name }}{% endblock %}
+
+{% macro field(f, help='') %}
+  <div class="field">
+    {{ f.label }}
+    {{ f() }}
+    {% if help %}<div class="help">{{ help }}</div>{% endif %}
+    {% for error in f.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+  </div>
+{% endmacro %}
+
+{% block content %}
+<section class="wrap form-page">
+  <div class="card">
+    <h1>Create your account</h1>
+    <p class="muted">This course is designed for learners aged 10 to 18.</p>
+
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      {{ field(form.username, 'Letters, numbers and underscores. Do not use your full real name.') }}
+      {{ field(form.email) }}
+      {{ field(form.birth_year, 'We only store the year, so we can suggest the right track.') }}
+      {{ field(form.guardian_email, 'Required if you are under 13. Ask them before you type it in.') }}
+      {{ field(form.password, 'At least 8 characters, mixing letters and numbers.') }}
+      {{ field(form.confirm) }}
+
+      <div class="field field-check">
+        {{ form.accept() }}
+        {{ form.accept.label }}
+      </div>
+      {% for error in form.accept.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+
+      {{ form.submit(class="btn full-width") }}
+    </form>
+
+    <p class="faint mt-lg" >
+      Already registered? <a href="{{ url_for('auth.login') }}">Log in</a>.
+      Read the <a href="{{ url_for('main.safety') }}">safety and privacy notes</a>.
+    </p>
+  </div>
+</section>
+{% endblock %}

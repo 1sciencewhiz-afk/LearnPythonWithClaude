@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Badges - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap section">
+  <h1>Badges</h1>
+  <p class="muted">
+    {{ badge_rows | selectattr('1') | list | length }} of {{ badge_rows | length }} earned.
+  </p>
+  <div class="badge-grid">
+    {% for badge, award in badge_rows %}
+      <div class="badge-card card {% if not award %}locked{% endif %}">
+        <span class="badge-emoji" aria-hidden="true">{{ badge.emoji }}</span>
+        <strong>{{ badge.name }}</strong>
+        <span class="faint">{{ badge.description }}</span>
+        {% if award %}
+          <span class="tag tag-done mt-sm" >{{ award.awarded_at.strftime('%d %b %Y') }}</span>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

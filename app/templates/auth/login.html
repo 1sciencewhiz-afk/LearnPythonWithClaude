@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Log in - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap form-page">
+  <div class="card">
+    <h1>Welcome back</h1>
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="field">
+        {{ form.identifier.label }}{{ form.identifier() }}
+        {% for error in form.identifier.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="field">
+        {{ form.password.label }}{{ form.password() }}
+        {% for error in form.password.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="field field-check">
+        {{ form.remember() }}{{ form.remember.label }}
+      </div>
+      {{ form.submit(class="btn full-width") }}
+    </form>
+    <p class="faint mt-lg" >
+      New here? <a href="{{ url_for('auth.register') }}">Create an account</a>.
+    </p>
+  </div>
+</section>
+{% endblock %}

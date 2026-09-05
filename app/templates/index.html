@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ site_name }} - Python for ages 10 to 18{% endblock %}
+
+{% block content %}
+<section class="wrap hero">
+  <span class="eyebrow">Built for ages 10-18</span>
+  <h1>Learn to code in Python, one small win at a time.</h1>
+  <p class="lead">
+    {{ lesson_count }} hands-on lessons across three tracks. Write real Python in your
+    browser, get instant feedback that explains what went wrong, and keep your progress
+    in your own account.
+  </p>
+  <div class="hero-actions">
+    <a class="btn" href="{{ url_for('auth.register') }}">Create a free account</a>
+    <a class="btn btn-secondary" href="{{ url_for('auth.login') }}">I already have one</a>
+  </div>
+</section>
+
+<section class="wrap section">
+  <h2 class="center">Three tracks, so you start in the right place</h2>
+  <p class="center muted mb-lg" >
+    Pick the one that matches where you are. You can switch or do all three.
+  </p>
+  <div class="grid grid-3">
+    {% for track in all_tracks %}
+      <article class="card track-card">
+        <span class="track-emoji" aria-hidden="true">{{ track.emoji }}</span>
+        <span class="track-ages">{{ track.ages }}</span>
+        <h3>{{ track.title }}</h3>
+        <p class="muted">{{ track.blurb }}</p>
+        <p class="faint">{{ track.lessons | length }} lessons &middot; {{ track.total_xp }} XP</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="wrap section">
+  <div class="grid grid-2">
+    <div class="card">
+      <h2>How it works</h2>
+      <ul class="feature-list">
+        <li>Read a short explanation with a worked example.</li>
+        <li>Write your own code in the built-in editor.</li>
+        <li>Press Check - every test tells you exactly what it wanted.</li>
+        <li>Stuck? Three hints, then the worked solution unlocks.</li>
+        <li>Earn XP, build a daily streak, collect badges.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Made for younger coders</h2>
+      <ul class="feature-list">
+        <li>Errors explained in plain English, never a raw traceback.</li>
+        <li>Runaway loops are stopped safely instead of freezing your computer.</li>
+        <li>No adverts, no tracking, no chat with strangers.</li>
+        <li>Under 13? A parent or guardian email goes on the account.</li>
+        <li>You can delete your account and all its data whenever you like.</li>
+      </ul>
+      <p><a href="{{ url_for('main.safety') }}">Read the safety and privacy notes</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap section center">
+  <h2>Your first line of Python is one click away.</h2>
+  <p class="muted">No payment, no downloads. Just a browser.</p>
+  <a class="btn" href="{{ url_for('auth.register') }}">Start with lesson one</a>
+</section>
+{% endblock %}

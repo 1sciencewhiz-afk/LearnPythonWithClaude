@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap section">
+  <h1>Hello, {{ current_user.display_name or current_user.username }}.</h1>
+
+  <div class="stat-row mb-lg" >
+    <div class="stat">
+      <div class="value">{{ current_user.level }}</div>
+      <div class="label">Level</div>
+      <progress class="progress-bar mt-sm" value="{{ level_percent }}" max="100"
+                aria-label="Progress to the next level">{{ level_percent }}%</progress>
+      <div class="faint mt-xs" >{{ xp_into_level }} / {{ xp_for_level }} XP to level {{ current_user.level + 1 }}</div>
+    </div>
+    <div class="stat">
+      <div class="value">{{ current_user.xp }}</div>
+      <div class="label">Total XP</div>
+    </div>
+    <div class="stat">
+      <div class="value">{{ current_user.streak_days }} &#128293;</div>
+      <div class="label">Day streak</div>
+      <div class="faint mt-xs" >Best: {{ current_user.longest_streak }}</div>
+    </div>
+    <div class="stat">
+      <div class="value">{{ completed_count }}/{{ lesson_count }}</div>
+      <div class="label">Lessons done</div>
+    </div>
+    <div class="stat">
+      <div class="value">{{ earned_badges | length }}</div>
+      <div class="label">Badges</div>
+    </div>
+  </div>
+
+  <div class="card mb-lg" >
+    <span class="track-ages">Pick up where you left off</span>
+    <h2 class="mt-sm">{{ next_lesson.title }}</h2>
+    <p class="muted">{{ next_lesson.goal }}</p>
+    <p class="faint">{{ next_track.title }} &middot; about {{ next_lesson.minutes }} minutes &middot; {{ next_lesson.xp }} XP</p>
+    <a class="btn" href="{{ url_for('learn.lesson', lesson_slug=next_lesson.slug) }}">Continue</a>
+  </div>
+
+  <h2>Your tracks</h2>
+  <div class="grid grid-3 mb-lg" >
+    {% for summary in summaries %}
+      <article class="card track-card">
+        <span class="track-emoji" aria-hidden="true">{{ summary.track.emoji }}</span>
+        <span class="track-ages">{{ summary.track.ages }}</span>
+        <h3>{{ summary.track.title }}</h3>
+        <progress class="progress-bar {% if summary.percent == 100 %}is-done{% endif %}"
+                  value="{{ summary.percent }}" max="100"
+                  aria-label="{{ summary.track.title }} progress">{{ summary.percent }}%</progress>
+        <p class="faint">{{ summary.done }} of {{ summary.total }} lessons &middot; {{ summary.percent }}%</p>
+        <a class="btn btn-secondary btn-small" href="{{ url_for('learn.track_detail', track_slug=summary.track.slug) }}">
+          {% if summary.started %}Keep going{% else %}Start track{% endif %}
+        </a>
+      </article>
+    {% endfor %}
+  </div>
+
+  {% if earned_badges %}
+    <h2>Badges earned</h2>
+    <div class="row mb-lg" >
+      {% for badge in earned_badges %}
+        <span class="tag tag-done" title="{{ badge.description }}">{{ badge.emoji }} {{ badge.name }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if recent %}
+    <h2>Recent activity</h2>
+    <ul class="lesson-list">
+      {% for submission in recent %}
+        <li class="lesson-item {% if submission.passed %}is-done{% endif %}">
+          <span class="lesson-num" aria-hidden="true">{{ "✓" if submission.passed else "•" }}</span>
+          <span class="lesson-body">
+            <strong>{{ submission.lesson_slug.replace('-', ' ') | title }}</strong>
+            <span class="lesson-meta">{{ submission.created_at.strftime('%d %b, %H:%M') }} UTC</span>
+          </span>
+          <span class="lesson-status">{{ "Passed" if submission.passed else "Not yet" }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</section>
+{% endblock %}

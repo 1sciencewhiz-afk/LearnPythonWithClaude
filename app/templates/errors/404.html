@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Page not found - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap section center pad-tall" >
+  <p class="eyebrow">Error 404</p>
+  <h1>Page not found</h1>
+  <p class="muted">That page does not exist. It may have moved, or the link may have a typo.</p>
+  <a class="btn" href="{{ url_for('main.index') }}">Back to safety</a>
+</section>
+{% endblock %}

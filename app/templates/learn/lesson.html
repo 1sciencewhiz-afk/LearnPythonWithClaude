@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}{{ lesson.title }} - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="wrap lesson-head">
+  <p class="crumbs">
+    <a href="{{ url_for('learn.tracks') }}">Tracks</a> /
+    <a href="{{ url_for('learn.track_detail', track_slug=track.slug) }}">{{ track.title }}</a> /
+    Lesson {{ index }} of {{ total }}
+  </p>
+  <h1>{{ lesson.title }}</h1>
+  <p class="muted">{{ lesson.goal }}</p>
+  <p class="faint">
+    About {{ lesson.minutes }} minutes &middot; {{ lesson.xp }} XP
+    {%- if row.completed %} &middot; <span class="tag tag-done">Completed</span>{% endif %}
+  </p>
+</div>
+
+<div class="wrap lesson-layout">
+  <div class="stack">
+    <article class="card concept">
+      {{ lesson.concept | safe }}
+      <h3>Worked example</h3>
+      <pre><code id="example-code">{{ lesson.example }}</code></pre>
+    </article>
+
+    <section class="brief">
+      <h3>Your turn</h3>
+      <p>{{ lesson.brief | safe }}</p>
+    </section>
+
+    {% if lesson.hints %}
+      <section class="stack">
+        <h3 class="mb-0">Hints</h3>
+        {% for hint in lesson.hints %}
+          <details class="hint-item">
+            <summary>Hint {{ loop.index }}</summary>
+            <p>{{ hint }}</p>
+          </details>
+        {% endfor %}
+      </section>
+    {% endif %}
+
+    <nav class="row">
+      {% if previous %}
+        <a class="btn btn-secondary btn-small" href="{{ url_for('learn.lesson', lesson_slug=previous.slug) }}">&larr; {{ previous.title }}</a>
+      {% endif %}
+      {% if following and row.completed %}
+        <a class="btn btn-secondary btn-small" href="{{ url_for('learn.lesson', lesson_slug=following.slug) }}">{{ following.title }} &rarr;</a>
+      {% endif %}
+    </nav>
+  </div>
+
+  <div class="editor-panel stack"
+       data-lesson="{{ lesson.slug }}"
+       data-csrf="{{ csrf_token() }}"
+       data-run-url="{{ url_for('learn.run_code', lesson_slug=lesson.slug) }}"
+       data-check-url="{{ url_for('learn.check_code', lesson_slug=lesson.slug) }}"
+       data-solution-url="{{ url_for('learn.solution', lesson_slug=lesson.slug) }}"
+       data-tracks-url="{{ url_for('learn.tracks') }}"
+       data-starter="{{ lesson.starter }}">
+
+    <div class="editor-shell" data-editor>
+      <div class="editor-bar">
+        <span>solution.py</span>
+        <span class="faint">Ctrl+Enter to check</span>
+      </div>
+      <div class="editor-wrap">
+        <div class="editor-gutter" aria-hidden="true">1</div>
+        <div class="editor-area">
+          <pre class="editor-highlight" aria-hidden="true"></pre>
+          <textarea class="editor-input" id="code" spellcheck="false" autocapitalize="off"
+                    autocomplete="off" autocorrect="off" wrap="off"
+                    aria-label="Python code editor">{{ code }}</textarea>
+        </div>
+      </div>
+      <div class="stdin-box">
+        <label for="stdin">Input for your program (one line per input() call)</label>
+        <textarea id="stdin" spellcheck="false" placeholder="Leave empty unless the lesson uses input()"></textarea>
+      </div>
+      <div class="editor-actions">
+        <button type="button" class="btn" id="check-btn">Check my answer</button>
+        <button type="button" class="btn btn-secondary" id="run-btn">Just run it</button>
+        <button type="button" class="btn btn-quiet" id="reset-btn">Reset</button>
+        <button type="button" class="btn btn-quiet" id="solution-btn" {% if not show_solution %}hidden{% endif %}>Show solution</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="mb-sm">Output</h3>
+      <div class="console" id="console"></div>
+      <div id="results"></div>
+    </div>
+
+    <div class="card" id="solution-box" hidden></div>
+
+    {% if not show_solution %}
+      <p class="faint">The worked solution unlocks after {{ attempts_before_solution }} attempts - or as soon as you pass.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lesson.js') }}"></script>
+<script src="{{ url_for('static', filename='js/highlight-static.js') }}"></script>
+{% endblock %}

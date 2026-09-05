@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Safety and privacy - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap section narrow-page" >
+  <h1>Safety and privacy</h1>
+  <p class="muted">Written for learners and for the adults who look after them.</p>
+
+  <div class="card stack">
+    <div>
+      <h2>What we store</h2>
+      <ul class="feature-list">
+        <li>Your username, email address and a one-way hash of your password.</li>
+        <li>Your birth <em>year</em> only - never a full date of birth.</li>
+        <li>A guardian email, if you are under 13.</li>
+        <li>Which lessons you finished, your XP, streak and badges.</li>
+        <li>Your most recent code for each lesson, so you can come back to it.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>What we do not do</h2>
+      <ul class="feature-list">
+        <li>No adverts and no third-party tracking scripts.</li>
+        <li>No chat, comments, messaging or profiles other learners can see.</li>
+        <li>No file uploads and no way to share code with strangers.</li>
+        <li>No selling or sharing of anyone's data.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Younger learners</h2>
+      <p class="muted">
+        Accounts are for ages 10 to 18. If you are under 13 the sign-up form asks for a
+        parent or guardian email address, and we expect you to have their permission before
+        you create the account. Depending on where this site is running, laws such as COPPA
+        in the United States or the UK Age Appropriate Design Code may require verifiable
+        parental consent - an operator of a public deployment is responsible for meeting
+        those rules.
+      </p>
+    </div>
+
+    <div>
+      <h2>Running code safely</h2>
+      <p class="muted">
+        Your Python runs on the server in a locked-down child process: a throw-away folder,
+        a stripped environment, hard limits on time, memory and output, and no access to
+        files, the network or the system. A loop that never ends is stopped after a few
+        seconds and reported back to you as a friendly message.
+      </p>
+    </div>
+
+    <div>
+      <h2>Deleting your account</h2>
+      <p class="muted">
+        Go to <a href="{{ url_for('auth.profile') }}">your account page</a> and use
+        "Delete your account". Everything - progress, saved code and badges - is removed
+        from the database immediately.
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

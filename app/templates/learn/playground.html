@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Playground - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap section">
+  <h1>Playground</h1>
+  <p class="muted">
+    No lesson, no checks, no marks. Try an idea, break something, see what happens.
+    The same safety limits apply, so a runaway loop just stops after a few seconds.
+  </p>
+
+  <div class="lesson-layout"
+       data-playground
+       data-csrf="{{ csrf_token() }}"
+       data-run-url="{{ url_for('learn.playground_run') }}">
+
+    <div class="editor-shell" data-editor>
+      <div class="editor-bar">
+        <span>scratch.py</span>
+        <span class="faint">Ctrl+Enter to run</span>
+      </div>
+      <div class="editor-wrap">
+        <div class="editor-gutter" aria-hidden="true">1</div>
+        <div class="editor-area">
+          <pre class="editor-highlight" aria-hidden="true"></pre>
+          <textarea class="editor-input" id="code" spellcheck="false" autocapitalize="off"
+                    autocomplete="off" autocorrect="off" wrap="off"
+                    aria-label="Python code editor"># Anything you like. Try this, then make it your own.
+
+for i in range(1, 6):
+    print("*" * i)
+</textarea>
+        </div>
+      </div>
+      <div class="stdin-box">
+        <label for="stdin">Input for your program</label>
+        <textarea id="stdin" spellcheck="false" placeholder="Leave empty unless you call input()"></textarea>
+      </div>
+      <div class="editor-actions">
+        <button type="button" class="btn" id="run-btn">Run</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="mb-sm">Output</h3>
+      <div class="console" id="console"></div>
+      <p class="faint mt-md" >
+        Available modules: <code>math</code>, <code>random</code>, <code>string</code>,
+        <code>json</code>, <code>datetime</code>. Anything that touches files, the
+        network or the system is switched off.
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/playground.js') }}"></script>
+{% endblock %}

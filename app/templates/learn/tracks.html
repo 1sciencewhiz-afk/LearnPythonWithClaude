@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Tracks - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap section">
+  <h1>Choose a track</h1>
+  <p class="muted">Based on your age we suggest <strong>{{ suggested | title }}</strong>, but every track is open to you.</p>
+
+  <div class="grid grid-3">
+    {% for summary in summaries %}
+      <article class="card track-card">
+        <span class="track-emoji" aria-hidden="true">{{ summary.track.emoji }}</span>
+        <span class="track-ages">{{ summary.track.ages }}{% if summary.track.slug == suggested %} &middot; suggested for you{% endif %}</span>
+        <h3>{{ summary.track.title }}</h3>
+        <p class="muted">{{ summary.track.blurb }}</p>
+        <progress class="progress-bar {% if summary.percent == 100 %}is-done{% endif %}"
+                  value="{{ summary.percent }}" max="100"
+                  aria-label="{{ summary.track.title }} progress">{{ summary.percent }}%</progress>
+        <p class="faint">{{ summary.done }}/{{ summary.total }} lessons &middot; {{ summary.track.total_xp }} XP available</p>
+        <a class="btn btn-small" href="{{ url_for('learn.track_detail', track_slug=summary.track.slug) }}">Open track</a>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

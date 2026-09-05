@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Your account - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap section narrow-page" >
+  <h1>Your account</h1>
+
+  <div class="card mb-md" >
+    <h2>Details</h2>
+    <p class="faint">
+      Username <strong>{{ current_user.username }}</strong> &middot;
+      joined {{ current_user.created_at.strftime('%d %B %Y') }} &middot;
+      level {{ current_user.level }} with {{ current_user.xp }} XP
+    </p>
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="field">
+        {{ form.display_name.label }}{{ form.display_name() }}
+        {% for error in form.display_name.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="field">
+        {{ form.guardian_email.label }}{{ form.guardian_email() }}
+        <div class="help">
+          {% if current_user.needs_guardian %}Required while you are under 13.{% else %}Optional.{% endif %}
+        </div>
+        {% for error in form.guardian_email.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      </div>
+      {{ form.submit(class="btn") }}
+    </form>
+  </div>
+
+  <div class="card mb-md" >
+    <h2>Change password</h2>
+    <form method="post" novalidate>
+      {{ password_form.hidden_tag() }}
+      <div class="field">
+        {{ password_form.current_password.label }}{{ password_form.current_password() }}
+        {% for error in password_form.current_password.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="field">
+        {{ password_form.password.label }}{{ password_form.password() }}
+        {% for error in password_form.password.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="field">
+        {{ password_form.confirm.label }}{{ password_form.confirm() }}
+        {% for error in password_form.confirm.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      </div>
+      {{ password_form.submit(class="btn btn-secondary") }}
+    </form>
+  </div>
+
+  <div class="card mb-md" >
+    <h2>Badges</h2>
+    <div class="badge-grid">
+      {% for badge, award in badge_rows %}
+        <div class="badge-card card {% if not award %}locked{% endif %}">
+          <span class="badge-emoji" aria-hidden="true">{{ badge.emoji }}</span>
+          <strong>{{ badge.name }}</strong>
+          <span class="faint">{{ badge.description }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card danger-zone">
+    <h2>Delete your account</h2>
+    <p class="muted">
+      This removes your account, your progress, your saved code and your badges.
+      It cannot be undone.
+    </p>
+    <form method="post" action="{{ url_for('auth.delete_account') }}" novalidate>
+      {{ delete_form.hidden_tag() }}
+      <div class="field">
+        {{ delete_form.confirm_username.label }}{{ delete_form.confirm_username(placeholder=current_user.username) }}
+      </div>
+      {{ delete_form.submit(class="btn btn-danger") }}
+    </form>
+  </div>
+</section>
+{% endblock %}

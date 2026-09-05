@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Not allowed - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap section center pad-tall" >
+  <p class="eyebrow">Error 403</p>
+  <h1>Not allowed</h1>
+  <p class="muted">You do not have access to that page. If you were logged out, log in and try again.</p>
+  <a class="btn" href="{{ url_for('main.index') }}">Back to safety</a>
+</section>
+{% endblock %}
