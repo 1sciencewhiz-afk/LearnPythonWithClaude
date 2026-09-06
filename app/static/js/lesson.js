@@ -34,6 +34,12 @@
     var consoleBox = document.getElementById("console");
     var resultsBox = document.getElementById("results");
 
+    // Shared with tutor.js, so the AI tutor sidebar can see the learner's
+    // current code and what happened when they last ran or checked it.
+    window.LessonState = window.LessonState || {};
+    window.LessonState.getCode = function () { return editor.value(); };
+    window.LessonState.lastResult = null;
+
     function setBusy(busy, label) {
       [runBtn, checkBtn].forEach(function (btn) { if (btn) btn.disabled = busy; });
       if (busy) consoleBox.textContent = label;
@@ -126,6 +132,7 @@
         setBusy(true, "Running your code...");
         post(runUrl).then(function (payload) {
           setBusy(false);
+          window.LessonState.lastResult = payload.data;
           showOutput(payload.data);
           resultsBox.innerHTML = renderError(payload.data.error);
         }).catch(function () {
@@ -141,6 +148,7 @@
         post(checkUrl).then(function (payload) {
           setBusy(false);
           var data = payload.data;
+          window.LessonState.lastResult = data;
           showOutput(data);
           var html = renderError(data.error) + renderChecks(data.results);
           if (data.passed) html += renderSuccess(data);

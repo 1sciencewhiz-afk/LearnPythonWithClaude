@@ -17,7 +17,7 @@ from ..curriculum import TRACKS, get_lesson, get_track, lesson_position, neighbo
 from ..extensions import db
 from ..ratelimit import limit
 from ..sandbox import execute
-from ..services import badges, progress
+from ..services import badges, progress, tutor
 
 bp = Blueprint("learn", __name__)
 
@@ -107,6 +107,7 @@ def lesson(lesson_slug: str):
         following=following,
         show_solution=row.completed or row.attempts >= ATTEMPTS_BEFORE_SOLUTION,
         attempts_before_solution=ATTEMPTS_BEFORE_SOLUTION,
+        tutor_enabled=bool(current_app.config.get("GEMINI_API_KEY")),
     )
 
 
@@ -189,6 +190,54 @@ def solution(lesson_slug: str):
     if not (row.completed or row.attempts >= ATTEMPTS_BEFORE_SOLUTION):
         return jsonify({"available": False, "attempts_needed": ATTEMPTS_BEFORE_SOLUTION - row.attempts}), 403
     return jsonify({"available": True, "solution": lesson.solution})
+
+
+@bp.post("/api/tutor/<lesson_slug>")
+@login_required
+@limit(12, 60)
+def tutor_help(lesson_slug: str):
+    """Ask the AI tutor sidebar for a nudge. It never sees the reference solution."""
+    lesson = _lesson_or_404(lesson_slug)
+
+    if not current_app.config.get("GEMINI_API_KEY"):
+        return jsonify({"ok": False, "error": "The AI tutor is not turned on for this server."}), 503
+
+    payload = request.get_json(silent=True) or {}
+    message = str(payload.get("message", "")).strip()
+    if not message:
+        return jsonify({"ok": False, "error": "Type a question first."}), 400
+    if len(message) > 2000:
+        return jsonify({"ok": False, "error": "That message is a bit long - try shortening it."}), 400
+
+    history = payload.get("history")
+    if not isinstance(history, list):
+        history = []
+
+    last_result = payload.get("last_result")
+    if not isinstance(last_result, dict):
+        last_result = {}
+    last_error = last_result.get("error")
+    failed_checks = [
+        str(item.get("label", "")).strip()
+        for item in (last_result.get("results") or [])
+        if isinstance(item, dict) and not item.get("passed") and item.get("label")
+    ]
+
+    context = tutor.TutorContext(
+        lesson=lesson,
+        code=str(payload.get("code", "")),
+        stdout=str(last_result.get("stdout", "")),
+        stderr=str(last_result.get("stderr", "")),
+        error=last_error if isinstance(last_error, dict) else None,
+        failed_checks=failed_checks,
+    )
+
+    try:
+        reply = tutor.ask_tutor(current_app.config, context, history, message)
+    except tutor.TutorError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 502
+
+    return jsonify({"ok": True, "reply": reply})
 
 
 @bp.route("/playground")

@@ -1,9 +1,9 @@
 # Learn Python With Claude
 
 A self-hosted, account-based web app that teaches Python to learners aged 10-18.
-Twenty-eight hands-on lessons across three tracks, an in-browser editor, automatic
-grading with plain-English error messages, and per-account progress, XP, streaks
-and badges.
+Thirty-four hands-on lessons across three tracks, an in-browser editor, automatic
+grading with plain-English error messages, an optional AI tutor sidebar, and
+per-account progress, XP, streaks and badges.
 
 ```
 python3 -m venv .venv
@@ -24,9 +24,9 @@ gated behind the one before it, so nobody lands in the middle of a topic:
 
 | Track | Suggested age | Lessons | Covers |
 |---|---|---|---|
-| Foundations | 10-12 | 11 | print, variables, maths, strings, input, if/elif, for, lists, while, functions |
-| Builders | 13-15 | 9 | default arguments, slicing, dictionaries, string methods, nested loops, try/except, modules, comprehensions |
-| Creators | 16-18 | 8 | classes, inheritance, recursion, higher-order functions, binary search, data modelling, testing |
+| Foundations | 10-12 | 13 | print, variables, maths, strings, input, if/elif, and/or/not, for, lists, while, functions, random |
+| Builders | 13-15 | 11 | default arguments, slicing, sets, dictionaries, string methods, number formatting, nested loops, try/except, modules, comprehensions |
+| Creators | 16-18 | 10 | classes, inheritance, recursion, higher-order functions, decorators, generators, binary search, data modelling, testing |
 
 **The lesson player.** Each lesson has teaching copy, a worked example, a brief,
 starter code, three progressive hints, and a set of checks. Learners can *run*
@@ -41,6 +41,12 @@ never erases the recorded best. Ten badges cover first steps, persistence,
 streaks, levels, per-track completion and finishing the course.
 
 **Playground.** A free scratchpad with no grading, under the same safety limits.
+
+**AI tutor sidebar.** A retractable chat panel on every lesson page, powered by
+Google's Gemini API. It is entirely optional - the app runs normally without it,
+and the panel simply explains that it is turned off until a `GEMINI_API_KEY` is
+configured. See [AI tutor](#ai-tutor) below for how it is kept from handing out
+answers.
 
 ## Running learner code safely
 
@@ -69,14 +75,46 @@ a seccomp profile, or gVisor — and treat the process as untrusted. The in-proc
 limits above raise the cost of an attack; they are not a substitute for kernel
 isolation.
 
+## AI tutor
+
+`app/services/tutor.py` calls the Gemini API to give a stuck learner a nudge,
+from a chat sidebar on the lesson page (`app/static/js/tutor.js`,
+`app/templates/learn/lesson.html`). It is designed so it cannot become an
+answer key, with two independent safeguards:
+
+1. **The model is never shown the reference solution.** The prompt built by
+   `build_contents()` includes only the lesson's goal, concept, brief, the
+   hints already unlocked on the page, the learner's current code, and what
+   happened the last time they ran or checked it. There is nothing to leak,
+   however the conversation is steered.
+2. **Every reply is filtered before it reaches the learner.** `sanitize_reply()`
+   strips any multi-line fenced code block out of the response, replacing it
+   with a short note. A one-line generic reminder (`if x > 0:`) survives; a
+   pasted-in solution does not, regardless of the wording used to ask for it.
+
+The system prompt also instructs the model to teach with questions and small
+nudges rather than write code, but the two safeguards above hold even if a
+learner talks the model out of following it.
+
+The tutor endpoint (`POST /api/tutor/<lesson_slug>`) is rate limited per
+account like the sandbox endpoints, requires login, and returns `503` with a
+plain explanation if no `GEMINI_API_KEY` is configured - nothing about the
+rest of the app depends on it. No chat history is stored server-side; the
+last few turns are kept in the browser tab only and are gone on reload.
+
 ## Privacy and younger learners
 
 Only the birth *year* is collected, never a full date of birth. Under-13 sign-ups
 require a parent or guardian email on the account, enforced as a cross-field rule
-in `RegistrationForm.validate`. There is no chat, no comments, no profiles other
-learners can see, no file uploads, no adverts and no third-party scripts — the
-Content-Security-Policy is `'self'` only, which is why the app contains no inline
-styles or scripts.
+in `RegistrationForm.validate`. There is no chat or profile visible to other
+learners, no file uploads, no adverts and no third-party scripts loaded in the
+browser — the Content-Security-Policy is `'self'` only, which is why the app
+contains no inline styles or scripts. The one exception is the optional AI
+tutor: when enabled, a learner's lesson brief, code and last output are sent
+server-side to the Gemini API to generate a reply (never their account details,
+and never to any other learner). It is off unless an operator sets a
+`GEMINI_API_KEY`, and Google's own data-handling terms apply to that traffic -
+review them before enabling it for real learners.
 
 Note that a guardian email field is a design commitment, not legal compliance.
 If you deploy this publicly, COPPA (US), the UK Age Appropriate Design Code, and
@@ -95,7 +133,7 @@ app/
   blueprints/        main (landing, dashboard), auth, learn (player + API)
   curriculum/        schema.py plus one module per track
   sandbox/           runner.py (parent, limits) and driver.py (in-sandbox harness)
-  services/          progress.py (XP, streaks) and badges.py
+  services/          progress.py (XP, streaks), badges.py, tutor.py (Gemini)
   templates/, static/
 tests/               sandbox, curriculum, auth, learning flow, app-level
 wsgi.py              entry point
@@ -109,7 +147,7 @@ reaching a learner.
 ## Commands
 
 ```
-.venv/bin/python -m pytest              # 169 tests
+.venv/bin/python -m pytest              # 200+ tests
 FLASK_APP=wsgi flask init-db            # create tables
 FLASK_APP=wsgi flask create-demo-user   # demo / demo-pass-1
 FLASK_APP=wsgi flask check-curriculum   # solve every lesson, report failures
@@ -126,6 +164,10 @@ FLASK_APP=wsgi flask reset-db           # drop and recreate (destructive)
 | `SANDBOX_TIMEOUT_SECONDS` | `5` | Wall-clock limit per run |
 | `SANDBOX_MEMORY_MB` | `128` | Address-space limit per run |
 | `SESSION_COOKIE_SECURE` | off | Set to `1` behind HTTPS (forced in production config) |
+| `GEMINI_API_KEY` | unset | Turns the AI tutor sidebar on. Leave unset to disable it entirely |
+| `GEMINI_MODEL` | `gemini-2.0-flash` | Gemini model used for tutor replies |
+| `GEMINI_API_BASE` | Google's public endpoint | Override for testing or a proxy |
+| `GEMINI_TIMEOUT_SECONDS` | `12` | How long to wait for a tutor reply before giving up |
 
 The app logs a warning at startup if `SECRET_KEY` is still the built-in default.
 

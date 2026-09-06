@@ -107,6 +107,69 @@ descending order.</p>
         ],
     ),
     Lesson(
+        slug="sets",
+        title="No Duplicates Allowed",
+        goal="Use a set to work with unique values and compare groups of them.",
+        minutes=12,
+        xp=30,
+        concept="""
+<p>A <strong>set</strong> is a collection like a list, but it never keeps
+duplicates and does not remember order. Build one with <code>set(...)</code>,
+and Python throws away repeats automatically.</p>
+<p>Sets are brilliant for two jobs: removing duplicates, and comparing groups
+with <code>&amp;</code> (items in <strong>both</strong> - the intersection) and
+<code>|</code> (items in <strong>either</strong> - the union).</p>
+""",
+        example=(
+            'seen = ["red", "blue", "red", "green", "blue"]\n'
+            "unique = set(seen)\nprint(sorted(unique))\n\n"
+            'morning = {"Ana", "Ben", "Cleo"}\n'
+            'afternoon = {"Ben", "Cleo", "Dae"}\n'
+            "print(sorted(morning & afternoon))"
+        ),
+        brief=(
+            "Write <code>shared_fans(list_a, list_b)</code> returning a sorted list of "
+            "names that appear in <strong>both</strong> lists, with no duplicates, using sets."
+        ),
+        starter="def shared_fans(list_a, list_b):\n    \n",
+        solution="def shared_fans(list_a, list_b):\n    return sorted(set(list_a) & set(list_b))\n",
+        checks=[
+            {
+                "kind": "call",
+                "func": "shared_fans",
+                "args": [["Ana", "Ben", "Cleo"], ["Ben", "Cleo", "Dae"]],
+                "expect": ["Ben", "Cleo"],
+                "label": "Finds the shared names",
+            },
+            {
+                "kind": "call",
+                "func": "shared_fans",
+                "args": [["Ana", "Ana", "Ben"], ["Ana"]],
+                "expect": ["Ana"],
+                "label": "Removes duplicates from the result",
+            },
+            {"kind": "call", "func": "shared_fans", "args": [[], ["Ana"]], "expect": [], "label": "Nothing shared"},
+            {
+                "kind": "call",
+                "func": "shared_fans",
+                "args": [["Zoe", "Amy"], ["Amy", "Zoe"]],
+                "expect": ["Amy", "Zoe"],
+                "label": "Result comes back sorted",
+            },
+            {
+                "kind": "source",
+                "must_contain": [r"set\("],
+                "describe": "Uses set() to find the overlap",
+                "label": "Uses a set",
+            },
+        ],
+        hints=[
+            "Turn each list into a set with set(list_a) and set(list_b).",
+            "& between two sets gives the items that are in both.",
+            "sorted(set(list_a) & set(list_b))",
+        ],
+    ),
+    Lesson(
         slug="dictionaries",
         title="Look It Up",
         goal="Store labelled data in dictionaries.",
@@ -228,6 +291,54 @@ original, they hand you a new string. You have to store the result.</p>
             "split() with no arguments handles runs of spaces for you.",
             "part[0] is the first character of a word.",
             'Build a list of upper-case initials, then ".".join() them.',
+        ],
+    ),
+    Lesson(
+        slug="number-formatting",
+        title="Formatting Numbers Neatly",
+        goal="Control decimal places and thousands separators in f-strings.",
+        minutes=12,
+        xp=30,
+        concept="""
+<p>An f-string can do more than drop a value in place - add a
+<strong>format spec</strong> after a colon to control how it looks.</p>
+<ul>
+  <li><code>{value:.2f}</code> - always show exactly two decimal places</li>
+  <li><code>{value:,}</code> - add a comma every three digits</li>
+  <li><code>{value:,.2f}</code> - both at once</li>
+</ul>
+<p>These specs work on numbers, not text - trying them on a string raises an
+error, so convert first if you need to.</p>
+""",
+        example=(
+            "price = 3.5\ntotal = 125000\n\n"
+            'print(f"${price:.2f}")\n'
+            'print(f"{total:,}")\n'
+            'print(f"${total:,.2f}")'
+        ),
+        brief=(
+            "Write <code>format_price(amount)</code> returning a string like "
+            "<code>$1,234.50</code> for the given amount - a dollar sign, comma "
+            "thousands separator, and exactly two decimal places."
+        ),
+        starter="def format_price(amount):\n    \n",
+        solution='def format_price(amount):\n    return f"${amount:,.2f}"\n',
+        checks=[
+            {"kind": "call", "func": "format_price", "args": [1234.5], "expect": "$1,234.50", "label": "Comma and two decimals"},
+            {"kind": "call", "func": "format_price", "args": [0], "expect": "$0.00", "label": "Zero"},
+            {"kind": "call", "func": "format_price", "args": [1000000], "expect": "$1,000,000.00", "label": "Two commas"},
+            {"kind": "call", "func": "format_price", "args": [42.4], "expect": "$42.40", "label": "Pads to two decimals"},
+            {
+                "kind": "source",
+                "must_contain": [r",\.2f"],
+                "describe": "Uses the ,.2f format spec",
+                "label": "Uses a format spec",
+            },
+        ],
+        hints=[
+            "The format spec goes after a colon, inside the curly brackets.",
+            "Combine both specs in one go: {amount:,.2f}",
+            'f"${amount:,.2f}"',
         ],
     ),
     Lesson(

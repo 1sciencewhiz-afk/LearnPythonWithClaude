@@ -255,6 +255,54 @@ signs!), <code>!=</code> not equal, <code>&gt;</code>, <code>&lt;</code>,
         ],
     ),
     Lesson(
+        slug="combining-conditions",
+        title="And, Or, and Not",
+        goal="Combine more than one condition in a single check.",
+        minutes=12,
+        xp=25,
+        concept="""
+<p>Sometimes one comparison is not enough. <code>and</code>, <code>or</code> and
+<code>not</code> let you combine conditions.</p>
+<p><code>and</code> is only true when <strong>both</strong> sides are true.
+<code>or</code> is true when <strong>at least one</strong> side is true.
+<code>not</code> flips a condition from true to false, or false to true.</p>
+<p>You can put several comparisons on one line - Python checks each one and
+combines the results.</p>
+""",
+        example=(
+            'age = 13\nhas_ticket = True\n\n'
+            'if age >= 12 and has_ticket:\n'
+            '    print("Welcome to the show")\n\n'
+            'if age < 5 or not has_ticket:\n'
+            '    print("Not allowed in")'
+        ),
+        brief=(
+            "Write a function <code>can_ride(height_cm, age)</code> that returns "
+            "<code>True</code> only when the rider is at least <code>120</code> cm tall "
+            "<strong>and</strong> at least <code>8</code> years old. Otherwise return "
+            "<code>False</code>."
+        ),
+        starter="def can_ride(height_cm, age):\n    \n",
+        solution="def can_ride(height_cm, age):\n    return height_cm >= 120 and age >= 8\n",
+        checks=[
+            {"kind": "call", "func": "can_ride", "args": [130, 10], "expect": True, "label": "Tall and old enough"},
+            {"kind": "call", "func": "can_ride", "args": [100, 10], "expect": False, "label": "Too short"},
+            {"kind": "call", "func": "can_ride", "args": [130, 5], "expect": False, "label": "Too young"},
+            {"kind": "call", "func": "can_ride", "args": [120, 8], "expect": True, "label": "Exactly at both minimums"},
+            {
+                "kind": "source",
+                "must_contain": [r"\band\b"],
+                "describe": "Uses and to combine both conditions",
+                "label": "Uses and",
+            },
+        ],
+        hints=[
+            "Both conditions must be true, so join them with and.",
+            "height_cm >= 120 and age >= 8",
+            "You can return the combined comparison directly - no if needed.",
+        ],
+    ),
+    Lesson(
         slug="for-loops",
         title="Doing It Again",
         goal="Repeat work with a for loop.",
@@ -425,6 +473,59 @@ looks at what you <code>return</code>.</p>
             "Deal with the youngest case first.",
             "Once a return runs, the function stops - so you may not need else.",
             "if age < 5: return 0, then if age < 16: return 7, then return 12.",
+        ],
+    ),
+    Lesson(
+        slug="random-numbers",
+        title="Adding Some Randomness",
+        goal="Use the random module to make programs unpredictable - on purpose.",
+        minutes=12,
+        xp=30,
+        concept="""
+<p>Python ships with a <code>random</code> module. <code>import random</code>
+brings it in, then <code>random.randint(a, b)</code> gives you a whole number
+between <code>a</code> and <code>b</code>, <strong>including both ends</strong>.</p>
+<p>Because the result changes every run, it is hard to write a test for it -
+unless you <code>random.seed(number)</code> first. Seeding tells Python to
+start from a fixed point, so the "random" numbers that follow are always the
+same. Real games skip the seed; this lesson uses one so your answer can be
+checked.</p>
+""",
+        example=(
+            "import random\n\n"
+            "random.seed(42)\n"
+            "print(random.randint(1, 10))\n\n"
+            "random.seed(42)\n"
+            "print(random.randint(1, 10))  # same number both times"
+        ),
+        brief=(
+            "Write <code>lucky_number(seed, low, high)</code>: call "
+            "<code>random.seed(seed)</code> first, then return "
+            "<code>random.randint(low, high)</code>."
+        ),
+        starter="import random\n\n\ndef lucky_number(seed, low, high):\n    \n",
+        solution=(
+            "import random\n\n\n"
+            "def lucky_number(seed, low, high):\n"
+            "    random.seed(seed)\n"
+            "    return random.randint(low, high)\n"
+        ),
+        checks=[
+            {"kind": "call", "func": "lucky_number", "args": [42, 1, 10], "expect": 2, "label": "Seed 42 between 1 and 10"},
+            {"kind": "call", "func": "lucky_number", "args": [1, 1, 6], "expect": 2, "label": "Seed 1 between 1 and 6"},
+            {"kind": "call", "func": "lucky_number", "args": [7, 1, 100], "expect": 42, "label": "Seed 7 between 1 and 100"},
+            {"kind": "call", "func": "lucky_number", "args": [0, 5, 5], "expect": 5, "label": "A range of exactly one number"},
+            {
+                "kind": "source",
+                "must_contain": [r"import\s+random", r"random\.seed", r"random\.randint"],
+                "describe": "Seeds random, then calls randint",
+                "label": "Uses random.seed and random.randint",
+            },
+        ],
+        hints=[
+            "random.seed(seed) must run before random.randint, and use the seed argument, not a fixed number.",
+            "random.randint(low, high) includes both low and high.",
+            "random.seed(seed)\\nreturn random.randint(low, high)",
         ],
     ),
     Lesson(

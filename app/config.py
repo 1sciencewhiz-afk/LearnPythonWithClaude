@@ -36,6 +36,16 @@ class Config:
     # Under this age we require a guardian email on the account.
     GUARDIAN_REQUIRED_UNDER_AGE = 13
 
+    # AI tutor sidebar: guides learners without handing out solutions. It is
+    # only available once an API key is configured - the app runs fine
+    # without one, the sidebar just explains that it is turned off.
+    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+    GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
+    GEMINI_API_BASE = os.environ.get(
+        "GEMINI_API_BASE", "https://generativelanguage.googleapis.com/v1beta"
+    )
+    GEMINI_TIMEOUT_SECONDS = float(os.environ.get("GEMINI_TIMEOUT_SECONDS", "12"))
+
 
 class DevelopmentConfig(Config):
     DEBUG = True

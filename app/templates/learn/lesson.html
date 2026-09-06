@@ -99,10 +99,36 @@
     {% endif %}
   </div>
 </div>
+
+<button type="button" class="tutor-toggle" id="tutor-toggle" aria-expanded="false" aria-controls="tutor-sidebar">
+  <span aria-hidden="true">&#129302;</span> AI Tutor
+</button>
+<div class="tutor-backdrop" id="tutor-backdrop" hidden></div>
+<aside class="tutor-sidebar" id="tutor-sidebar" aria-hidden="true" aria-label="AI tutor chat"
+       data-tutor-url="{{ url_for('learn.tutor_help', lesson_slug=lesson.slug) }}"
+       data-csrf="{{ csrf_token() }}"
+       data-enabled="{{ 'true' if tutor_enabled else 'false' }}">
+  <div class="tutor-header">
+    <strong>&#129302; AI Tutor</strong>
+    <button type="button" class="btn-quiet" id="tutor-close" aria-label="Close AI tutor">&times;</button>
+  </div>
+  <p class="faint tutor-note">
+    I can see your code and what happened last time you ran it - but I will
+    not give you the answer. Ask me for a nudge instead.
+  </p>
+  <div class="tutor-messages" id="tutor-messages" role="log" aria-live="polite"></div>
+  <form class="tutor-form" id="tutor-form">
+    <label for="tutor-input" class="sr-only">Ask the AI tutor a question</label>
+    <textarea id="tutor-input" rows="2" placeholder="What are you stuck on?"
+              {% if not tutor_enabled %}disabled{% endif %}></textarea>
+    <button type="submit" class="btn btn-small" id="tutor-send" {% if not tutor_enabled %}disabled{% endif %}>Send</button>
+  </form>
+</aside>
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lesson.js') }}"></script>
 <script src="{{ url_for('static', filename='js/highlight-static.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tutor.js') }}"></script>
 {% endblock %}

@@ -340,6 +340,159 @@ short expression; anything bigger deserves a real <code>def</code> with a name.<
         ],
     ),
     Lesson(
+        slug="decorators",
+        title="Wrapping Functions With Decorators",
+        goal="Write a decorator that adds behaviour to a function without changing it.",
+        minutes=18,
+        xp=45,
+        concept="""
+<p>A <strong>decorator</strong> is a function that takes a function and returns
+a new one that wraps it. The wrapper can run code before and after the
+original, then hands back its result - the original never has to change.</p>
+<p><code>@decorator_name</code> just above a <code>def</code> is shorthand for
+<code>my_func = decorator_name(my_func)</code>. Inside the wrapper, use
+<code>*args, **kwargs</code> to accept and forward any arguments, whatever the
+wrapped function needs.</p>
+""",
+        example=(
+            "def shout(func):\n"
+            "    def wrapper(*args, **kwargs):\n"
+            "        result = func(*args, **kwargs)\n"
+            "        return result.upper()\n"
+            "    return wrapper\n\n\n"
+            "@shout\n"
+            "def greet(name):\n"
+            '    return f"hello {name}"\n\n\n'
+            'print(greet("ada"))'
+        ),
+        brief=(
+            "Write a decorator <code>counted(func)</code> that gives the wrapped "
+            "function a <code>.calls</code> attribute, starting at <code>0</code> and "
+            "increasing by one on every call. Then write <code>ping_three_times()</code>: "
+            "inside it, define <code>ping()</code> returning <code>\"pong\"</code>, "
+            "decorate it with <code>@counted</code>, call it three times, and return "
+            "<code>ping.calls</code>. Also write <code>shout_hello()</code>: define "
+            "<code>hello()</code> returning <code>\"hi\"</code>, decorate it with "
+            "<code>@counted</code>, and return the tuple "
+            "<code>(hello(), hello.calls)</code>."
+        ),
+        starter=(
+            "def counted(func):\n"
+            "    def wrapper(*args, **kwargs):\n"
+            "        \n"
+            "    wrapper.calls = 0\n"
+            "    return wrapper\n\n\n"
+            "def ping_three_times():\n"
+            "    \n\n\n"
+            "def shout_hello():\n"
+            "    \n"
+        ),
+        solution=(
+            "def counted(func):\n"
+            "    def wrapper(*args, **kwargs):\n"
+            "        wrapper.calls += 1\n"
+            "        return func(*args, **kwargs)\n"
+            "    wrapper.calls = 0\n"
+            "    return wrapper\n\n\n"
+            "def ping_three_times():\n"
+            "    @counted\n"
+            "    def ping():\n"
+            '        return "pong"\n\n'
+            "    for _ in range(3):\n"
+            "        ping()\n"
+            "    return ping.calls\n\n\n"
+            "def shout_hello():\n"
+            "    @counted\n"
+            "    def hello():\n"
+            '        return "hi"\n\n'
+            "    return hello(), hello.calls\n"
+        ),
+        checks=[
+            {"kind": "call", "func": "ping_three_times", "args": [], "expect": 3, "label": "Counts three calls"},
+            {
+                "kind": "call",
+                "func": "shout_hello",
+                "args": [],
+                "expect": ["hi", 1],
+                "label": "Forwards the return value and counts once",
+            },
+            {
+                "kind": "source",
+                "must_contain": [r"@counted", r"\.calls"],
+                "describe": "Uses @counted and reads .calls",
+                "label": "Uses the decorator",
+            },
+        ],
+        hints=[
+            "wrapper.calls += 1 keeps a running total across calls.",
+            "wrapper must still call func(*args, **kwargs) and return its result.",
+            "Set the starting count straight after defining wrapper: wrapper.calls = 0",
+        ],
+    ),
+    Lesson(
+        slug="generators",
+        title="Generators and yield",
+        goal="Write a generator function that produces values lazily.",
+        minutes=16,
+        xp=40,
+        concept="""
+<p>A <strong>generator</strong> function looks like a normal function but uses
+<code>yield</code> instead of <code>return</code>. Each <code>yield</code>
+pauses the function and hands out one value; calling it again picks up right
+where it left off.</p>
+<p>This means a generator can represent a huge - or endless - sequence without
+ever building the whole thing in memory. Loop over it with <code>for</code>, or
+collect every value at once with <code>list(...)</code>.</p>
+""",
+        example=(
+            "def countdown(n):\n"
+            "    while n > 0:\n"
+            "        yield n\n"
+            "        n -= 1\n\n\n"
+            "for number in countdown(3):\n"
+            "    print(number)\n\n"
+            "print(list(countdown(3)))"
+        ),
+        brief=(
+            "Write a generator function <code>even_numbers(limit)</code> that yields "
+            "every even number from <code>0</code> up to (but not including) "
+            "<code>limit</code>, in order. Then write "
+            "<code>even_numbers_list(limit)</code> that returns "
+            "<code>list(even_numbers(limit))</code>."
+        ),
+        starter=(
+            "def even_numbers(limit):\n"
+            "    \n\n\n"
+            "def even_numbers_list(limit):\n"
+            "    return list(even_numbers(limit))\n"
+        ),
+        solution=(
+            "def even_numbers(limit):\n"
+            "    for n in range(limit):\n"
+            "        if n % 2 == 0:\n"
+            "            yield n\n\n\n"
+            "def even_numbers_list(limit):\n"
+            "    return list(even_numbers(limit))\n"
+        ),
+        checks=[
+            {"kind": "call", "func": "even_numbers_list", "args": [10], "expect": [0, 2, 4, 6, 8], "label": "Evens below 10"},
+            {"kind": "call", "func": "even_numbers_list", "args": [1], "expect": [0], "label": "Zero counts as even"},
+            {"kind": "call", "func": "even_numbers_list", "args": [0], "expect": [], "label": "Empty range"},
+            {"kind": "call", "func": "even_numbers_list", "args": [7], "expect": [0, 2, 4, 6], "label": "Stops before the limit"},
+            {
+                "kind": "source",
+                "must_contain": [r"\byield\b"],
+                "describe": "Uses yield to make a generator",
+                "label": "Uses yield",
+            },
+        ],
+        hints=[
+            "Loop through range(limit) and check n % 2 == 0.",
+            "Use yield, not return, or it will not be a generator.",
+            "for n in range(limit):\\n    if n % 2 == 0:\\n        yield n",
+        ],
+    ),
+    Lesson(
         slug="algorithms",
         title="Search and Efficiency",
         goal="Understand why binary search beats scanning.",
