@@ -32,12 +32,22 @@
     </div>
   </div>
 
-  <div class="card mb-lg" >
-    <span class="track-ages">Pick up where you left off</span>
-    <h2 class="mt-sm">{{ next_lesson.title }}</h2>
-    <p class="muted">{{ next_lesson.goal }}</p>
-    <p class="faint">{{ next_track.title }} &middot; about {{ next_lesson.minutes }} minutes &middot; {{ next_lesson.xp }} XP</p>
-    <a class="btn" href="{{ url_for('learn.lesson', lesson_slug=next_lesson.slug) }}">Continue</a>
+  <div class="grid grid-2 mb-lg">
+    <div class="card">
+      <span class="track-ages">Pick up where you left off</span>
+      <h2 class="mt-sm">{{ next_lesson.title }}</h2>
+      <p class="muted">{{ next_lesson.goal }}</p>
+      <p class="faint">{{ next_track.title }} &middot; about {{ next_lesson.minutes }} minutes &middot; {{ next_lesson.xp }} XP</p>
+      <a class="btn" href="{{ url_for('learn.lesson', lesson_slug=next_lesson.slug) }}">Continue</a>
+    </div>
+
+    <div class="card">
+      <span class="track-ages">Forgotten what something means?</span>
+      <h2 class="mt-sm">Glossary</h2>
+      <p class="muted">Every term taught across all three tracks, searchable in one place - {{ glossary_count }} terms so far.</p>
+      <p class="faint">Look one up, then jump straight back to the lesson that taught it.</p>
+      <a class="btn btn-secondary" href="{{ url_for('main.glossary') }}">Browse the glossary</a>
+    </div>
   </div>
 
   <h2>Your tracks</h2>

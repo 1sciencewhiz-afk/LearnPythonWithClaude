@@ -38,6 +38,7 @@ def dashboard():
         xp_into_level=into_level,
         xp_for_level=needed,
         level_percent=round(into_level / needed * 100) if needed else 0,
+        glossary_count=len(glossary_entries()),
         recent=(
             Submission.query.filter_by(user_id=current_user.id)
             .order_by(Submission.created_at.desc(), Submission.id.desc())

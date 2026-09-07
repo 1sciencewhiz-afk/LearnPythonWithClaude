@@ -203,6 +203,15 @@ def test_dashboard_shows_progress(auth_client):
     assert b"Total XP" in response.data
 
 
+def test_dashboard_links_to_the_glossary(auth_client):
+    from app.curriculum import glossary_entries
+
+    response = auth_client.get("/dashboard")
+    body = response.data.decode()
+    assert 'href="/glossary"' in body
+    assert f"{len(glossary_entries())} terms" in body
+
+
 def test_playground_runs_free_code(auth_client):
     response = auth_client.post(
         "/api/playground",
