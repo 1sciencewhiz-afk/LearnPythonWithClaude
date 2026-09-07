@@ -3,7 +3,14 @@ from __future__ import annotations
 
 import os
 
-from app import create_app
+from dotenv import load_dotenv
+
+# Load a .env file from the project root, if one exists, before app/config.py
+# reads its settings from the environment. Real environment variables (set by
+# your shell or host) always take precedence over values from .env.
+load_dotenv()
+
+from app import create_app  # noqa: E402
 
 app = create_app()
 

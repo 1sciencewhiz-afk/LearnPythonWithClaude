@@ -183,6 +183,13 @@ FLASK_APP=wsgi flask reset-db           # drop and recreate (destructive)
 
 The app logs a warning at startup if `SECRET_KEY` is still the built-in default.
 
+Any of these can also go in a `.env` file in the project root instead of your
+shell - `wsgi.py` loads it automatically via `python-dotenv` before the app
+reads its configuration. A real environment variable always wins over one from
+`.env`. **Never commit `.env` to git** (it is already in `.gitignore`) - it is
+meant for secrets like `GEMINI_API_KEY` that must not end up in your repository
+history or a public fork.
+
 ## Deployment notes
 
 Serve with a real WSGI server (`gunicorn wsgi:app`) behind HTTPS, and set
