@@ -59,6 +59,31 @@ def total_lessons() -> int:
     return len(LESSONS_BY_SLUG)
 
 
+def glossary_entries() -> list[dict]:
+    """Every glossary term across the whole course, alphabetised.
+
+    A term is taught once, in the earliest lesson that defines it (tracks and
+    lessons are already in teaching order), so "revise this" always points at
+    the lesson where it was first explained rather than every place it is
+    later used.
+    """
+    seen: dict[str, dict] = {}
+    for track in TRACKS:
+        for lesson in track.lessons:
+            for entry in lesson.glossary:
+                key = entry.term.strip().lower()
+                if key in seen:
+                    continue
+                seen[key] = {
+                    "term": entry.term,
+                    "definition": entry.definition,
+                    "anchor": entry.anchor,
+                    "lesson": lesson,
+                    "track": track,
+                }
+    return sorted(seen.values(), key=lambda row: row["term"].lower())
+
+
 __all__ = [
     "Lesson",
     "Track",
@@ -71,4 +96,5 @@ __all__ = [
     "lesson_position",
     "neighbours",
     "total_lessons",
+    "glossary_entries",
 ]

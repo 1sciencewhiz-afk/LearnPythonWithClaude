@@ -12,6 +12,20 @@ from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
+class GlossaryTerm:
+    term: str
+    definition: str
+
+    @property
+    def anchor(self) -> str:
+        """A stable id for linking straight to this entry on the glossary page."""
+        slug = "".join(ch if ch.isalnum() else "-" for ch in self.term.lower())
+        while "--" in slug:
+            slug = slug.replace("--", "-")
+        return f"term-{slug.strip('-')}"
+
+
+@dataclass(frozen=True)
 class Lesson:
     slug: str
     title: str
@@ -23,6 +37,7 @@ class Lesson:
     solution: str
     checks: list[dict]
     hints: list[str] = field(default_factory=list)
+    glossary: list[GlossaryTerm] = field(default_factory=list)
     xp: int = 20
     minutes: int = 10
 

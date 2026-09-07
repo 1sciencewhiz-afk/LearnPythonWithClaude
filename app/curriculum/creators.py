@@ -1,7 +1,7 @@
 """Creators track - typically ages 16-18, heading towards real engineering."""
 from __future__ import annotations
 
-from .schema import Lesson, Track
+from .schema import GlossaryTerm, Lesson, Track
 
 LESSONS = [
     Lesson(
@@ -12,7 +12,9 @@ LESSONS = [
         xp=40,
         concept="""
 <p>A <strong>class</strong> is a blueprint. It describes what an object knows (its
-attributes) and what it can do (its methods).</p>
+<strong>attributes</strong>) and what it can do (its <strong>methods</strong>).
+Creating an object from a class is called <strong>instantiating</strong> it, and
+the object itself is called an <strong>instance</strong> of that class.</p>
 <pre><code>class Dog:
     def __init__(self, name):
         self.name = name
@@ -21,9 +23,30 @@ attributes) and what it can do (its methods).</p>
         return f"{self.name} says woof"</code></pre>
 <p><code>__init__</code> runs when you create an instance and sets it up.
 <code>self</code> is the particular object being worked on - it is the first
-parameter of every method, and Python passes it for you.</p>
+parameter of every method, and Python passes it for you automatically, so you
+never write it in the call, only in the definition.</p>
 <p>Reach for a class when several pieces of data always travel together and have
-operations that belong to them. Otherwise a plain function is usually better.</p>
+operations that belong to them. Otherwise a plain function is usually better -
+not everything needs to be a class, and forcing one on a problem that is really
+just a calculation adds ceremony without adding clarity.</p>
+<h4>Why this matters</h4>
+<p>Classes are how you model "things" in code: a bank account, a player, a book.
+Bundling the data (balance, owner) with the operations that are allowed on it
+(deposit, withdraw) keeps related code together and makes it much harder for
+another part of the program to put the object into an invalid state by
+accident.</p>
+<h4>Common mistakes</h4>
+<ul>
+  <li>Forgetting <code>self</code> as the first parameter of a method, or
+      forgetting to write <code>self.</code> before an attribute inside a
+      method - without it, Python treats the name as a local variable that
+      disappears when the method ends.</li>
+  <li>Confusing the class itself with an instance of it - <code>BankAccount</code>
+      is the blueprint; <code>BankAccount("Sam")</code> is one actual account
+      built from it.</li>
+  <li>Writing logic in <code>__init__</code> that belongs in a proper method -
+      <code>__init__</code> should just set up the starting attributes.</li>
+</ul>
 """,
         example=(
             "class Counter:\n"
@@ -104,6 +127,28 @@ operations that belong to them. Otherwise a plain function is usually better.</p
             "In __init__, save the arguments onto self.",
             "In withdraw, compare amount to self.balance before changing anything.",
         ],
+        glossary=[
+            GlossaryTerm(
+                "class",
+                "A blueprint for creating objects, describing the attributes they "
+                "hold and the methods they support.",
+            ),
+            GlossaryTerm(
+                "object (instance)",
+                "One concrete thing built from a class, e.g. BankAccount(\"Sam\") "
+                "is an instance of the BankAccount class.",
+            ),
+            GlossaryTerm(
+                "self",
+                "The first parameter of every method, standing for the particular "
+                "instance the method was called on. Python supplies it automatically.",
+            ),
+            GlossaryTerm(
+                "__init__()",
+                "The method that runs automatically when a new instance is created, "
+                "used to set up its starting attributes.",
+            ),
+        ],
     ),
     Lesson(
         slug="inheritance",
@@ -113,7 +158,9 @@ operations that belong to them. Otherwise a plain function is usually better.</p
         xp=40,
         concept="""
 <p>A class can <strong>inherit</strong> from another, getting all its behaviour and
-adding or replacing pieces:</p>
+adding or replacing pieces. The class being built on is the
+<strong>parent</strong> (or base) class; the new one is the
+<strong>subclass</strong>:</p>
 <pre><code>class Animal:
     def speak(self):
         return "..."
@@ -122,9 +169,32 @@ class Cat(Animal):
     def speak(self):
         return "meow"</code></pre>
 <p>Call the parent's version with <code>super()</code> - especially in
-<code>__init__</code>, so the parent's setup still runs.</p>
+<code>__init__</code>, so the parent's setup still runs before the subclass
+adds its own. Overriding a method - giving it a new body in the subclass, as
+<code>Cat</code> does with <code>speak</code> - is how a subclass changes
+behaviour while keeping everything else from the parent.</p>
 <p><code>__str__</code> decides what <code>print(obj)</code> shows.  Without it
-you get an unhelpful <code>&lt;Cat object at 0x7f...&gt;</code>.</p>
+you get an unhelpful <code>&lt;Cat object at 0x7f...&gt;</code>. Methods with
+double underscores either side, like <code>__init__</code> and
+<code>__str__</code>, are called <strong>dunder methods</strong> ("double
+underscore") and are Python's way of plugging your class into built-in
+behaviour like printing, equality checks and more.</p>
+<h4>Why this matters</h4>
+<p>Inheritance avoids repeating the shared behaviour of similar things.
+Different vehicle types share a lot of behaviour (they all have wheels and can
+be described); inheritance lets you write that once in <code>Vehicle</code> and
+only write what is genuinely different in each subclass.</p>
+<h4>Common mistakes</h4>
+<ul>
+  <li>Overriding <code>__init__</code> in a subclass and forgetting to call
+      <code>super().__init__(...)</code> - the parent's setup code never runs,
+      so attributes it would have set are missing.</li>
+  <li>Reaching for inheritance when the relationship is not really "is a kind
+      of" - a <code>Car</code> is a kind of <code>Vehicle</code>, but an
+      <code>Engine</code> is not; it belongs <em>inside</em> a car instead.</li>
+  <li>Forgetting that overriding a method completely replaces it unless you
+      explicitly call <code>super().method_name()</code> inside the override.</li>
+</ul>
 """,
         example=(
             "class Shape:\n"
@@ -205,6 +275,23 @@ you get an unhelpful <code>&lt;Cat object at 0x7f...&gt;</code>.</p>
             "Bicycle's __init__ takes no arguments but must still set the name.",
             'super().__init__("bicycle") passes the name up to Vehicle.',
         ],
+        glossary=[
+            GlossaryTerm(
+                "inheritance",
+                "A class taking on the attributes and methods of another (its "
+                "parent), then adding or overriding some of its own.",
+            ),
+            GlossaryTerm(
+                "subclass",
+                "A class that inherits from another, written as "
+                "class Child(Parent):.",
+            ),
+            GlossaryTerm(
+                "super()",
+                "Refers to the parent class from inside a subclass, most often used "
+                "to call the parent's __init__ so its setup still runs.",
+            ),
+        ],
     ),
     Lesson(
         slug="recursion",
@@ -216,17 +303,37 @@ you get an unhelpful <code>&lt;Cat object at 0x7f...&gt;</code>.</p>
 <p>A <strong>recursive</strong> function calls itself on a smaller version of the
 problem. Every one needs two parts:</p>
 <ul>
-  <li>a <strong>base case</strong> - the smallest input, answered directly</li>
-  <li>a <strong>recursive case</strong> - which must move towards the base case</li>
+  <li>a <strong>base case</strong> - the smallest input, answered directly, with
+      no further recursive call</li>
+  <li>a <strong>recursive case</strong> - which must move towards the base case,
+      by working on a smaller piece of the problem each time</li>
 </ul>
 <p>Miss the base case and you get a <code>RecursionError</code>: the function
-never stops calling itself.</p>
+never stops calling itself, because nothing ever tells it to stop.</p>
 <pre><code>def factorial(n):
     if n <= 1:
         return 1
     return n * factorial(n - 1)</code></pre>
 <p>Recursion shines on nested structures - folders inside folders, trees, nested
-lists - where loops get awkward.</p>
+lists - where loops get awkward, because you do not know in advance how many
+levels deep you will need to go. A loop has to guess that in advance; a
+recursive function just keeps calling itself until it runs out of nesting.</p>
+<h4>Why this matters</h4>
+<p>Some problems are naturally defined in terms of themselves: a folder's total
+size is the size of its files plus the total size of every folder inside it -
+which is the exact same question, just smaller. Recursion lets you write the
+code in the same shape as the definition, which is often far clearer than the
+equivalent loop.</p>
+<h4>Common mistakes</h4>
+<ul>
+  <li>Forgetting the base case entirely, or writing one that is never actually
+      reached because the recursive case does not shrink towards it.</li>
+  <li>Shrinking the problem in the wrong direction, e.g. adding to <code>n</code>
+      instead of subtracting from it.</li>
+  <li>Doing real work <em>after</em> the recursive call when it needed to happen
+      before, or the other way round - trace through a small example by hand if
+      the order feels uncertain.</li>
+</ul>
 """,
         example=(
             "def count_down(n):\n"
@@ -274,6 +381,18 @@ lists - where loops get awkward.</p>
             "The base case is simply reaching the end of the loop with no lists left.",
             "Add deep_sum(item) for lists, and item itself for numbers.",
         ],
+        glossary=[
+            GlossaryTerm(
+                "recursion",
+                "A function solving a problem by calling itself on a smaller "
+                "version of the same problem.",
+            ),
+            GlossaryTerm(
+                "base case",
+                "The smallest version of a recursive problem, answered directly "
+                "with no further recursive call - without one, recursion never stops.",
+            ),
+        ],
     ),
     Lesson(
         slug="higher-order",
@@ -284,13 +403,34 @@ lists - where loops get awkward.</p>
         concept="""
 <p>In Python a function is just another value. You can store it in a variable and
 hand it to another function - no brackets, because you are passing the function
-itself, not calling it.</p>
+itself, not calling it. A function that takes another function as an argument
+(or returns one) is called a <strong>higher-order function</strong>;
+<code>sorted()</code>, <code>filter()</code> and <code>map()</code> are all
+examples from the standard library.</p>
 <p><code>sorted()</code> takes a <code>key</code> function that says what to sort
 <em>by</em>:</p>
 <pre><code>people = [("Ada", 36), ("Alan", 41)]
 by_age = sorted(people, key=lambda person: person[1])</code></pre>
 <p><code>lambda</code> makes a small unnamed function inline. Keep them to a single
-short expression; anything bigger deserves a real <code>def</code> with a name.</p>
+short expression; anything bigger deserves a real <code>def</code> with a name -
+a lambda that needs a comment to explain it has outgrown being a lambda.</p>
+<h4>Why this matters</h4>
+<p>Sorting, filtering and transforming data "by some rule" is everywhere - sort
+players by score, keep only the products in stock, apply a discount to every
+price. Passing a small function in as the rule is far more flexible than
+writing a separate, nearly-identical loop for every possible rule.</p>
+<h4>Common mistakes</h4>
+<ul>
+  <li>Writing <code>key=my_function()</code> with the brackets - that calls the
+      function immediately and passes its result, instead of passing the
+      function itself.</li>
+  <li>Trying to cram a multi-step calculation, or a statement like
+      <code>print</code>, into a lambda - lambdas can only contain a single
+      expression.</li>
+  <li>Forgetting that <code>sorted()</code> compares tuples element by element,
+      so <code>key=lambda p: (-p[1], p[0])</code> means "by score descending,
+      then by name" rather than something more complicated.</li>
+</ul>
 """,
         example=(
             'words = ["banana", "fig", "cherry"]\n\n'
@@ -338,6 +478,18 @@ short expression; anything bigger deserves a real <code>def</code> with a name.<
             "Negating the score turns a descending sort into an ascending one.",
             "key=lambda p: (-p[1], p[0])",
         ],
+        glossary=[
+            GlossaryTerm(
+                "higher-order function",
+                "A function that takes another function as an argument, or returns "
+                "one, such as sorted(), filter() and map().",
+            ),
+            GlossaryTerm(
+                "lambda",
+                "A small, unnamed function written inline as lambda arguments: "
+                "expression, limited to a single expression with no statements.",
+            ),
+        ],
     ),
     Lesson(
         slug="decorators",
@@ -352,7 +504,27 @@ original, then hands back its result - the original never has to change.</p>
 <p><code>@decorator_name</code> just above a <code>def</code> is shorthand for
 <code>my_func = decorator_name(my_func)</code>. Inside the wrapper, use
 <code>*args, **kwargs</code> to accept and forward any arguments, whatever the
-wrapped function needs.</p>
+wrapped function needs - <code>*args</code> collects any number of positional
+arguments into a tuple, and <code>**kwargs</code> collects any keyword arguments
+into a dictionary, so the wrapper works for a function with any signature at
+all without needing to know it in advance.</p>
+<h4>Why this matters</h4>
+<p>Decorators let you add behaviour - logging, timing, access checks, caching -
+to many functions without copying that code into every single one of them.
+Python's own standard library and most popular frameworks use decorators
+constantly, so recognising the <code>@name</code> syntax on sight is a genuinely
+useful skill.</p>
+<h4>Common mistakes</h4>
+<ul>
+  <li>Forgetting to <code>return func(*args, **kwargs)</code> inside the
+      wrapper - the wrapped function silently stops giving back a real result.</li>
+  <li>Forgetting to <code>return wrapper</code> from the decorator itself, so
+      the decorated name ends up bound to <code>None</code> instead of a
+      working function.</li>
+  <li>Adding attributes (like a counter) to the wrong function - they belong on
+      <code>wrapper</code>, the function that actually gets called from now on,
+      not on the original.</li>
+</ul>
 """,
         example=(
             "def shout(func):\n"
@@ -428,6 +600,19 @@ wrapped function needs.</p>
             "wrapper must still call func(*args, **kwargs) and return its result.",
             "Set the starting count straight after defining wrapper: wrapper.calls = 0",
         ],
+        glossary=[
+            GlossaryTerm(
+                "decorator",
+                "A function that takes a function and returns a wrapped version of "
+                "it, applied with @decorator_name just above a def.",
+            ),
+            GlossaryTerm(
+                "*args and **kwargs",
+                "Catch-all parameters in a function definition: *args collects "
+                "extra positional arguments into a tuple, **kwargs collects extra "
+                "keyword arguments into a dictionary.",
+            ),
+        ],
     ),
     Lesson(
         slug="generators",
@@ -439,10 +624,31 @@ wrapped function needs.</p>
 <p>A <strong>generator</strong> function looks like a normal function but uses
 <code>yield</code> instead of <code>return</code>. Each <code>yield</code>
 pauses the function and hands out one value; calling it again picks up right
-where it left off.</p>
+where it left off, with all its local variables exactly as they were.</p>
 <p>This means a generator can represent a huge - or endless - sequence without
-ever building the whole thing in memory. Loop over it with <code>for</code>, or
-collect every value at once with <code>list(...)</code>.</p>
+ever building the whole thing in memory, which is what people mean by
+<strong>lazy evaluation</strong>: each value is only produced at the moment it
+is actually needed. Loop over it with <code>for</code>, or collect every value
+at once with <code>list(...)</code> - though doing that for an endless
+generator would never finish, which is exactly the situation generators are
+built to avoid needing.</p>
+<h4>Why this matters</h4>
+<p>Sometimes you want "the next value" without ever holding "all the values" in
+memory at once - reading a huge file line by line, generating an endless
+sequence of test data, or streaming results as they are produced instead of
+waiting for everything to finish. Generators are Python's tool for exactly that
+shape of problem.</p>
+<h4>Common mistakes</h4>
+<ul>
+  <li>Using <code>return</code> instead of <code>yield</code> by habit - that
+      turns the function back into a normal one that gives a single value,
+      rather than a generator.</li>
+  <li>Trying to index into a generator like a list, e.g.
+      <code>even_numbers(10)[0]</code> - generators only support being stepped
+      through in order, not jumped into directly.</li>
+  <li>Calling <code>list()</code> on a generator that never stops, which will
+      hang forever trying to collect every value first.</li>
+</ul>
 """,
         example=(
             "def countdown(n):\n"
@@ -491,6 +697,18 @@ collect every value at once with <code>list(...)</code>.</p>
             "Use yield, not return, or it will not be a generator.",
             "for n in range(limit):\\n    if n % 2 == 0:\\n        yield n",
         ],
+        glossary=[
+            GlossaryTerm(
+                "generator",
+                "A function that uses yield to produce values one at a time, "
+                "pausing between each one instead of building a full list upfront.",
+            ),
+            GlossaryTerm(
+                "yield",
+                "Pauses a generator function and hands out one value; the function "
+                "resumes from that exact point the next time a value is requested.",
+            ),
+        ],
     ),
     Lesson(
         slug="algorithms",
@@ -500,14 +718,34 @@ collect every value at once with <code>list(...)</code>.</p>
         xp=45,
         concept="""
 <p>Checking every item in a list of a million takes a million steps - that is
-<strong>linear</strong> time, written O(n).</p>
+<strong>linear</strong> time, written <strong>O(n)</strong>. This notation, called
+<strong>Big O</strong>, describes how the amount of work grows as the input
+grows, ignoring constant details like exactly how fast the computer is - it
+answers "if the list gets ten times bigger, how much slower does this get?"</p>
 <p>If the list is <strong>already sorted</strong> you can do far better. Look at
 the middle: too big, throw away the right half; too small, throw away the left.
 Each step halves what is left, so a million items takes about 20 steps. That is
-<strong>logarithmic</strong> time, O(log n).</p>
+<strong>logarithmic</strong> time, O(log n) - doubling the input only adds one
+more step, rather than doubling the work.</p>
 <p>The classic bug is the loop condition. Use <code>while low &lt;= high</code>,
 and always move <code>low</code> or <code>high</code> past <code>mid</code>, or
 you will loop forever on a missing value.</p>
+<h4>Why this matters</h4>
+<p>The same correct answer can come back in a fraction of a second or take
+minutes, purely because of which algorithm was used - this is the difference
+between an app that feels instant and one that feels broken, once the amount of
+data gets large. Binary search is the simplest possible example of an algorithm
+that is dramatically faster than the obvious one, and the reasoning behind it
+(cut the problem in half every step) reappears throughout computer science.</p>
+<h4>Common mistakes</h4>
+<ul>
+  <li>Running binary search on a list that is not actually sorted - the
+      halving logic silently gives wrong answers instead of an error.</li>
+  <li>Using <code>low &lt; high</code> instead of <code>low &lt;= high</code>,
+      which misses the case where only one candidate is left.</li>
+  <li>Forgetting to move <code>low</code> or <code>high</code> on every round,
+      which leaves the range unchanged and loops forever.</li>
+</ul>
 """,
         example=(
             "def linear_search(items, target):\n"
@@ -585,6 +823,18 @@ you will loop forever on a missing value.</p>
             "If the middle is too small, the answer is to its right: low = mid + 1.",
             "Loop while low <= high, and return -1 once the range is empty.",
         ],
+        glossary=[
+            GlossaryTerm(
+                "Big O notation",
+                "A way of describing how an algorithm's work grows as its input "
+                "grows, e.g. O(n) for linear, O(log n) for logarithmic.",
+            ),
+            GlossaryTerm(
+                "binary search",
+                "A search algorithm that repeatedly halves a sorted list's search "
+                "range, finding an item in O(log n) steps instead of scanning it all.",
+            ),
+        ],
     ),
     Lesson(
         slug="data-shapes",
@@ -600,7 +850,26 @@ dictionary keyed by some field. The pattern is always the same - walk the
 records, work out the key, and append into a list you create on first sight of
 that key.</p>
 <p><code>dict.setdefault(key, [])</code> does that in one step: it returns the
-existing list, or inserts a new empty one and returns that.</p>
+existing list for that key, or inserts a new empty one and returns that -
+either way you get a list back that you can immediately <code>.append()</code>
+to, without writing an <code>if key not in dict</code> check yourself.</p>
+<h4>Why this matters</h4>
+<p>Data almost never arrives in exactly the shape you need it in. A spreadsheet
+export, an API response, a database query result - all typically come back as a
+flat list of records, and turning that into "totals per category" or "records
+grouped by owner" is one of the single most common things real code does with
+data.</p>
+<h4>Common mistakes</h4>
+<ul>
+  <li>Using <code>dict[key].append(...)</code> directly on a key that might not
+      exist yet, which raises a <code>KeyError</code> - <code>setdefault</code>
+      or <code>.get(key, [])</code> sidesteps this.</li>
+  <li>Grouping correctly but forgetting the second step - turning each group's
+      raw list of values into the actual summary the brief asked for, such as
+      an average.</li>
+  <li>Rounding at the wrong point, e.g. rounding each mark before averaging
+      instead of rounding the final average.</li>
+</ul>
 """,
         example=(
             "records = [\n"
@@ -670,6 +939,14 @@ existing list, or inserts a new empty one and returns that.</p>
             "setdefault(subject, []).append(mark) does the grouping in one line.",
             "Then average each list with round(sum(v) / len(v), 1).",
         ],
+        glossary=[
+            GlossaryTerm(
+                "setdefault()",
+                "A dictionary method that returns a key's existing value, or "
+                "inserts and returns a given default if the key is missing - handy "
+                "for building up groups.",
+            ),
+        ],
     ),
     Lesson(
         slug="testing",
@@ -680,14 +957,31 @@ existing list, or inserts a new empty one and returns that.</p>
         concept="""
 <p>"It worked when I tried it" is not evidence. A <strong>test</strong> is code
 that checks other code, so you find out immediately when a change breaks
-something.</p>
+something - including changes you make months later, once you have forgotten
+exactly how the function works.</p>
 <p>The simplest form is <code>assert</code>: it does nothing if the condition is
 true, and raises <code>AssertionError</code> if it is false.</p>
 <pre><code>assert add(2, 2) == 4, "adding two and two"</code></pre>
 <p>Good tests cover three kinds of case: the ordinary one, the
-<strong>edge</strong> cases (empty, zero, one item, the boundary value), and the
+<strong>edge cases</strong> (empty, zero, one item, the boundary value), and the
 error cases. Most bugs live at the edges - which is exactly where the checks in
-this course have been aiming all along.</p>
+this course have been aiming all along, and exactly why so many briefs in this
+course have specifically asked about empty lists and boundary values.</p>
+<h4>Why this matters</h4>
+<p>Every lesson in this course has been graded by exactly this technique: a set
+of <code>assert</code>-like checks written before (or instead of) trusting that
+the code "looks right". Writing your own tests is how you get that same safety
+net for code nobody else has already checked for you.</p>
+<h4>Common mistakes</h4>
+<ul>
+  <li>Only testing the case you already know works, rather than the edge cases
+      most likely to expose a real bug.</li>
+  <li>Writing a test that depends on something changeable, like the current
+      date or a random number, so it passes sometimes and fails other times for
+      no reason connected to the code being wrong.</li>
+  <li>Fixing the bug the test happened to catch without asking whether the same
+      mistake exists anywhere else in the function.</li>
+</ul>
 """,
         example=(
             "def average(numbers):\n"
@@ -760,6 +1054,18 @@ this course have been aiming all along.</p>
             "len(ordered) % 2 tells you whether the length is odd.",
             "For even lengths average ordered[middle - 1] and ordered[middle].",
         ],
+        glossary=[
+            GlossaryTerm(
+                "assert",
+                "A statement that does nothing if its condition is True, and raises "
+                "an AssertionError if it is False - the simplest way to write a test.",
+            ),
+            GlossaryTerm(
+                "edge case",
+                "An unusual or boundary input - empty, zero, one item, the largest "
+                "or smallest allowed value - where bugs are most likely to hide.",
+            ),
+        ],
     ),
     Lesson(
         slug="library-project",
@@ -775,7 +1081,28 @@ must never lose track of a copy. Think about the rules before you write code:
 what happens if somebody borrows the last copy? Returns a book they never took?
 Borrows an unknown title?</p>
 <p>Deciding those rules first - and writing them down as checks - is the actual
-skill of software design. The code is the easy part.</p>
+skill of software design. The code is the easy part. Notice, too, that the
+<code>Library</code> class keeps its stock as a private implementation detail:
+nothing outside the class edits <code>self.stock</code> directly, every change
+goes through <code>borrow</code> or <code>give_back</code>, which is what
+enforces the rules. Hiding the data behind methods like this is called
+<strong>encapsulation</strong>, and it is the same idea the very first classes
+lesson introduced with <code>BankAccount</code>.</p>
+<h4>Why this matters</h4>
+<p>This project has no single new idea to introduce - it is where classes,
+dictionaries, edge cases and careful rule-writing from every earlier lesson in
+this track come together into one small but complete system, which is exactly
+what building real software feels like.</p>
+<h4>Common mistakes</h4>
+<ul>
+  <li>Checking <code>title in self.stock</code> without also checking the
+      count is above zero, which lets a title with 0 copies be borrowed.</li>
+  <li>Forgetting that <code>give_back</code> must still reject an unknown
+      title, even though it is adding a copy rather than removing one.</li>
+  <li>Changing <code>self.stock</code> before confirming the action is valid,
+      which can leave it changed even when the method should have returned
+      <code>False</code> and done nothing.</li>
+</ul>
 """,
         example=(
             "class Library:\n"
@@ -878,6 +1205,13 @@ skill of software design. The code is the easy part.</p>
             "self.stock.get(title, 0) treats an unknown title as zero copies.",
             "give_back must reject unknown titles, so check 'title not in self.stock'.",
             "available() filters for counts above zero, then sorts the titles.",
+        ],
+        glossary=[
+            GlossaryTerm(
+                "encapsulation",
+                "Hiding an object's data behind its methods, so outside code changes "
+                "it only through rules the object enforces, never directly.",
+            ),
         ],
     ),
 ]

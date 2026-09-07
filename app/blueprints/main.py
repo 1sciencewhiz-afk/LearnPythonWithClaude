@@ -4,7 +4,7 @@ from __future__ import annotations
 from flask import Blueprint, render_template
 from flask_login import current_user, login_required
 
-from ..curriculum import TRACKS, total_lessons
+from ..curriculum import TRACKS, glossary_entries, total_lessons
 from ..models import Submission
 from ..services import badges, progress
 
@@ -56,3 +56,9 @@ def badge_list():
 @bp.route("/safety")
 def safety():
     return render_template("safety.html")
+
+
+@bp.route("/glossary")
+@login_required
+def glossary():
+    return render_template("glossary.html", entries=glossary_entries())

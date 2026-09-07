@@ -41,6 +41,23 @@
       </section>
     {% endif %}
 
+    {% if lesson.glossary %}
+      <section class="stack">
+        <h3 class="mb-0">Key terms</h3>
+        <ul class="key-terms-list">
+          {% for term in lesson.glossary %}
+            <li>
+              <a href="{{ url_for('main.glossary') }}#{{ term.anchor }}"><strong>{{ term.term }}</strong></a>
+              - {{ term.definition }}
+            </li>
+          {% endfor %}
+        </ul>
+        <p class="faint">
+          <a href="{{ url_for('main.glossary') }}">See the full glossary &rarr;</a>
+        </p>
+      </section>
+    {% endif %}
+
     <nav class="row">
       {% if previous %}
         <a class="btn btn-secondary btn-small" href="{{ url_for('learn.lesson', lesson_slug=previous.slug) }}">&larr; {{ previous.title }}</a>

@@ -28,11 +28,21 @@ gated behind the one before it, so nobody lands in the middle of a topic:
 | Builders | 13-15 | 11 | default arguments, slicing, sets, dictionaries, string methods, number formatting, nested loops, try/except, modules, comprehensions |
 | Creators | 16-18 | 10 | classes, inheritance, recursion, higher-order functions, decorators, generators, binary search, data modelling, testing |
 
-**The lesson player.** Each lesson has teaching copy, a worked example, a brief,
-starter code, three progressive hints, and a set of checks. Learners can *run*
-their code to see its output, or *check* it to be graded. Failing checks say what
-was expected and what the code actually did. The reference solution unlocks after
-four attempts, or immediately on passing.
+**The lesson player.** Each lesson has teaching copy - including a "why this
+matters" explanation of where the idea is actually used, and a "common
+mistakes" list of the errors learners hit most - a worked example, a brief,
+starter code, three progressive hints, a "key terms" box, and a set of checks.
+Learners can *run* their code to see its output, or *check* it to be graded.
+Failing checks say what was expected and what the code actually did. The
+reference solution unlocks after four attempts, or immediately on passing.
+
+**Glossary.** Every term taught across all three tracks - `variable`,
+`f-string`, `decorator`, `binary search`, and around 80 more - is indexed on
+one searchable `/glossary` page (`app/curriculum/schema.py`'s `GlossaryTerm`,
+aggregated by `curriculum.glossary_entries()`). Each entry links back to the
+lesson that first taught it, and each lesson's own "key terms" box links
+forward to its entry, so a learner who has forgotten what a `set` is can look
+it up and jump straight back to the lesson to revise it.
 
 **Progress.** Passing a lesson for the first time awards its XP; resubmitting
 awards none. Levels get progressively longer (100 XP for level 2, then +50 each).
@@ -130,8 +140,8 @@ app/
   models.py          User, LessonProgress, Submission, BadgeAward
   forms.py           WTForms with the age and password rules
   ratelimit.py       per-user limiter for the sandbox endpoints
-  blueprints/        main (landing, dashboard), auth, learn (player + API)
-  curriculum/        schema.py plus one module per track
+  blueprints/        main (landing, dashboard, glossary), auth, learn (player + API)
+  curriculum/        schema.py (Lesson, GlossaryTerm) plus one module per track
   sandbox/           runner.py (parent, limits) and driver.py (in-sandbox harness)
   services/          progress.py (XP, streaks), badges.py, tutor.py (Gemini)
   templates/, static/
@@ -139,15 +149,17 @@ tests/               sandbox, curriculum, auth, learning flow, app-level
 wsgi.py              entry point
 ```
 
-Adding a lesson means appending a `Lesson` to a track module. The test suite then
-runs its reference solution against its own checks, and asserts the starter code
-does *not* already pass — so a broken or free lesson fails CI rather than
-reaching a learner.
+Adding a lesson means appending a `Lesson` to a track module, with at least one
+`GlossaryTerm` in its `glossary` list. The test suite then runs its reference
+solution against its own checks, asserts the starter code does *not* already
+pass, and asserts the concept copy actually explains why the idea matters and
+where learners tend to trip up — so a broken, free, or thin lesson fails CI
+rather than reaching a learner.
 
 ## Commands
 
 ```
-.venv/bin/python -m pytest              # 200+ tests
+.venv/bin/python -m pytest              # 280+ tests
 FLASK_APP=wsgi flask init-db            # create tables
 FLASK_APP=wsgi flask create-demo-user   # demo / demo-pass-1
 FLASK_APP=wsgi flask check-curriculum   # solve every lesson, report failures

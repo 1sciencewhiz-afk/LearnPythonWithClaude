@@ -37,6 +37,21 @@ def test_lesson_content_is_complete(track, lesson):
     assert all(check.get("label") for check in lesson.checks)
 
 
+@pytest.mark.parametrize("track,lesson", ALL_LESSONS)
+def test_lesson_teaches_at_least_one_glossary_term(track, lesson):
+    assert lesson.glossary, f"{lesson.slug} has no glossary terms for the index"
+    for entry in lesson.glossary:
+        assert entry.term.strip()
+        assert entry.definition.strip()
+
+
+@pytest.mark.parametrize("track,lesson", ALL_LESSONS)
+def test_lesson_concept_has_teaching_depth(track, lesson):
+    """Every lesson should explain why the idea matters, not just the syntax."""
+    assert "Why this matters" in lesson.concept
+    assert "Common mistakes" in lesson.concept
+
+
 def test_lesson_slugs_are_unique_across_tracks():
     slugs = [lesson.slug for track in curriculum.TRACKS for lesson in track.lessons]
     assert len(slugs) == len(set(slugs))
