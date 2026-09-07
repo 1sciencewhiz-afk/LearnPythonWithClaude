@@ -38,6 +38,11 @@ doing while you are debugging them.</p>
   <li>Mixing a double quote with a single quote, like <code>print("hi')</code>
       - the two ends must match.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Add a second <code>print()</code> line with your own name in it. Then, just
+to see it happen, delete one of the quote marks on purpose and read the error
+Python shows you - knowing what a broken string looks like now will save you
+time later.</p>
 """,
         example='print("Hello, world!")\nprint("I am learning Python.")',
         brief="Print exactly one line that says: I am learning Python!",
@@ -108,6 +113,11 @@ between a calculator and software.</p>
   <li>Variable names are case-sensitive: <code>pet</code> and <code>Pet</code> are
       two different boxes.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Print <code>type(pet)</code> and <code>type(legs)</code> to see how Python
+names each type. Then try <code>legs = legs + 1</code> followed by another
+<code>print(legs)</code> - the box's contents can always be replaced with a new
+value, including one calculated from the old one.</p>
 """,
         example='player = "Sam"\nscore = 0\nspeed = 1.5\n\nprint(player)\nprint(score)',
         brief=(
@@ -193,6 +203,11 @@ items out into a grid all use exactly this pair of operators.</p>
   <li>Forgetting that <code>*</code> and <code>/</code> run before <code>+</code>
       and <code>-</code>, the same as in maths class.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Predict the answers to <code>17 // 5</code> and <code>17 % 5</code> on paper
+first, then check them in the editor. Once that feels solid, try a negative
+number, like <code>-7 // 2</code> - Python's answer might surprise you, and is
+worth knowing before it catches you out in a real program.</p>
 """,
         example="apples = 12\nfriends = 5\n\neach = apples // friends\nleft_over = apples % friends\n\nprint(each)\nprint(left_over)",
         brief=(
@@ -272,6 +287,11 @@ nearly every remaining lesson.</p>
   <li>Misspelling a variable name inside the curly brackets - Python still
       raises a <code>NameError</code> even though it is inside quote marks.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Rebuild the same sentence using <code>+</code> instead of an f-string, and
+count how many quote marks and <code>str()</code> conversions you need. Then try
+<code>len(name.upper())</code> - does capitalising a string change how many
+characters it has?</p>
 """,
         example='name = "Ada"\nage = 12\n\nprint(f"{name} is {age} years old.")\nprint(name.upper())\nprint(len(name))',
         brief=(
@@ -349,6 +369,11 @@ calculators, chatbots and games all start with <code>input()</code>.</p>
   <li>Converting with <code>int()</code> when the input might have a decimal
       point - that needs <code>float()</code> instead.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Add a second <code>input()</code> call that reads someone's age, and work out
+what the stdin box below the editor needs to contain for both lines to be read
+correctly. Then try <code>int(input())</code> on a word instead of a number and
+read the error Python gives you.</p>
 """,
         example='print("What is your name?")\nname = input()\nprint(f"Nice to meet you, {name}.")',
         brief=(
@@ -427,6 +452,11 @@ to show you next.</p>
       number of spaces on different lines) - Python will raise an
       <code>IndentationError</code>.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Change <code>&gt;=</code> to <code>&gt;</code> in the example and predict
+which medal changes for a score of exactly 90 before you run it. Then swap the
+order of the <code>elif</code> branches - does the result for <code>score = 85</code>
+change?</p>
 """,
         example='score = 85\n\nif score >= 90:\n    print("Gold")\nelif score >= 70:\n    print("Silver")\nelse:\n    print("Bronze")',
         brief=(
@@ -520,6 +550,11 @@ conditions is what lets your code match how people actually describe rules.</p>
       so <code>not a and b</code> means <code>(not a) and b</code>, not
       <code>not (a and b)</code>.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Predict the result of <code>True and False or True</code> on paper first -
+remember Python checks <code>and</code> before <code>or</code> - then test it in
+the editor. Try <code>not True and False</code> too, and see if your prediction
+still holds.</p>
 """,
         example=(
             'age = 13\nhas_ticket = True\n\n'
@@ -608,6 +643,10 @@ code do work that scales to any amount of data.</p>
       still has a special meaning - it just holds whatever value it was on the
       last time round.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Change <code>range(1, 11)</code> to <code>range(10, 0, -1)</code> and predict
+the order of the output before you run it. Then try looping straight over a
+string: <code>for letter in "python":</code></p>
 """,
         example='for i in range(3):\n    print(f"Lap {i}")\n\nfor colour in ["red", "green"]:\n    print(colour)',
         brief=(
@@ -688,6 +727,11 @@ one.</p>
       not return the new list - <code>scores = scores.append(4)</code> throws
       away your list and replaces it with <code>None</code>.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Try <code>scores[10]</code> on a 3-item list and read the
+<code>IndexError</code>. Then try a slice like <code>scores[10:20]</code> on the
+same list - slicing past the end never crashes, it just gives you whatever
+exists.</p>
 """,
         example='scores = [4, 8, 15]\nprint(scores[0])\nprint(scores[-1])\n\nscores.append(23)\nprint(len(scores))\nprint(sum(scores))',
         brief=(
@@ -762,6 +806,10 @@ loop rather than a <code>for</code> loop.</p>
       if you already know exactly how many times to repeat, prefer
       <code>for i in range(n):</code>.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Comment out the line that changes <code>count</code> in the example and
+predict what will happen before you run it - then watch the lesson player's
+timeout catch the runaway loop. Put the line back before you move on.</p>
 """,
         example='count = 3\nwhile count > 0:\n    print(count)\n    count = count - 1\nprint("Go!")',
         brief=(
@@ -846,6 +894,10 @@ it in one place.</p>
       <code>ticket_price</code> instead of <code>ticket_price(5)</code>, which
       refers to the function itself rather than running it.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Write a small loop that calls <code>ticket_price()</code> for three or four
+different ages and prints each result. Notice you never had to copy the pricing
+rule itself - you just reused the name.</p>
 """,
         example='def area(width, height):\n    return width * height\n\nprint(area(3, 4))\nprint(area(10, 2))',
         brief=(
@@ -929,6 +981,11 @@ jobs.</p>
   <li>Seeding once per program when you actually wanted a fresh random number
       each time - seeding is only for making randomness repeatable for testing.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Call <code>lucky_number</code> with the same seed twice in a row and confirm
+you get the same answer both times. Then try a few different seed values and
+watch the result change - it is still following the rules, just starting from a
+different point each time.</p>
 """,
         example=(
             "import random\n\n"
@@ -1017,6 +1074,11 @@ an endless stream of brand new syntax.</p>
   <li>Forgetting <code>round()</code>, so the checks see a long decimal like
       <code>66.66666...</code> instead of the expected whole number.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Try calling <code>grade</code> with an <code>answers</code> list longer than
+<code>given</code> - <code>zip()</code> quietly stops at the shorter one instead
+of raising an error. Is that the behaviour a real quiz app should have, or
+should a missing answer count as wrong?</p>
 """,
         example=(
             'correct = ["a", "b", "c"]\ngiven = ["a", "x", "c"]\n\n'

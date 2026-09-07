@@ -40,6 +40,11 @@ this pattern, offering sensible defaults for almost everything.</p>
   <li>Forgetting that keyword arguments must come after positional ones in a
       call, e.g. <code>greet(greeting="Hi", "Sam")</code> is invalid.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Call <code>join_words</code> with the separator passed by name:
+<code>join_words(words=["a", "b"], separator=" + ")</code>. Then add a second
+default parameter of your own to a function and check what order Python
+requires it in.</p>
 """,
         example=(
             'def power(base, exponent=2):\n    return base ** exponent\n\n'
@@ -121,6 +126,11 @@ with more than one piece of data.</p>
   <li>Forgetting a slice beyond the end of a list does not crash - Python just
       gives you whatever exists, which is convenient but can hide a mistake.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Try <code>scores[::-1]</code> to reverse a list without calling
+<code>sorted()</code> at all. Then try <code>print(scores.sort())</code> on its
+own line and see the <code>None</code> it prints - a reminder of exactly the
+trap described above.</p>
 """,
         example=(
             "scores = [50, 90, 70, 20]\n\nprint(scores[:2])\nprint(scores[-1:])\n"
@@ -199,6 +209,11 @@ in two different warehouses. Sets answer both directly, in one expression.</p>
   <li>Trying to put a list inside a set - sets can only hold values that do not
       change, so a list (which can) is not allowed, but a tuple is.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Type <code>{1, 2, 2, 3}</code> straight into <code>print()</code> and watch
+the duplicate vanish immediately. Then try <code>set_a - set_b</code> (the
+difference) instead of <code>&amp;</code>, and compare it with
+<code>set_b - set_a</code> - the two are not the same.</p>
 """,
         example=(
             'seen = ["red", "blue", "red", "green", "blue"]\n'
@@ -302,6 +317,10 @@ Almost any real-world entity with several named properties becomes a dictionary
       <code>key</code> as if it were the value - a plain loop over a dictionary
       gives you the keys, not the values.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Try <code>player["lives"]</code> on a dictionary that has no
+<code>"lives"</code> key and read the <code>KeyError</code>. Then rewrite the
+same lookup with <code>player.get("lives", 3)</code> so it never crashes.</p>
 """,
         example=(
             'stock = {"apples": 5, "pears": 0}\n\nstock["plums"] = 12\n\n'
@@ -403,6 +422,11 @@ before you get to anything that looks like a "proper" algorithm.</p>
   <li>Splitting on the wrong character, or forgetting that <code>split()</code>
       with no argument also collapses multiple spaces into one gap.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Try <code>"a,b,,c".split(",")</code> and notice the empty string it produces
+between the two commas. Then try <code>"a  b   c".split()</code> with no
+argument on a string that uses spaces instead - see how it collapses runs of
+whitespace in a way <code>split(",")</code> does not for repeated commas.</p>
 """,
         example=(
             'raw = "  Ada, Grace , Alan  "\n\nnames = raw.split(",")\n'
@@ -496,6 +520,11 @@ finished program from a working one.</p>
       rather than <code>2.68</code>, because 2.675 cannot be stored exactly as
       a float - worth knowing before you rely on it for money.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Try the format spec <code>{value:+.2f}</code> - the <code>+</code> shows a
+sign on positive numbers too. Then pass a negative amount through
+<code>format_price</code> and check whether the minus sign ends up in a sensible
+place next to the dollar sign.</p>
 """,
         example=(
             "price = 3.5\ntotal = 125000\n\n"
@@ -567,6 +596,10 @@ every item in a list against every other item also needs two loops.</p>
       do <code>n * n</code> rounds of work, which gets slow fast for large
       <code>n</code>.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Change the inner loop's range so it depends on the outer counter, e.g.
+<code>range(1, row + 1)</code>, and see the triangle shape it produces instead
+of a rectangle.</p>
 """,
         example=(
             "for row in range(1, 4):\n"
@@ -661,6 +694,10 @@ expresses that decision.</p>
       never runs - execution jumps straight to <code>except</code> the moment
       the error happens.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Change <code>except ZeroDivisionError</code> to <code>except ValueError</code>
+and call <code>safe_divide(10, 0)</code> again - the program now crashes,
+because you are no longer catching the error that actually happens.</p>
 """,
         example=(
             'for text in ["12", "banana", "7"]:\n'
@@ -753,6 +790,10 @@ well-tested.</p>
       <code>len()</code> and <code>print()</code>, are always available and
       need no import at all.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Try <code>random.choice(["rock", "paper", "scissors"])</code> a few times in
+a row. Then look up one <code>math</code> function you have not used yet, such
+as <code>math.ceil</code>, and try it on a few different numbers.</p>
 """,
         example=(
             "import math\nimport random\n\n"
@@ -837,6 +878,10 @@ words, instead of four lines of loop scaffolding.</p>
   <li>Forgetting the <code>if</code> goes at the <em>end</em>, after the
       <code>for</code>, not at the start like in a normal sentence.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Rewrite <code>long_words</code> with a normal <code>for</code> loop, an empty
+list, and an <code>if</code> inside it, then compare the two versions side by
+side - same result, several more lines.</p>
 """,
         example=(
             "numbers = [1, 2, 3, 4, 5, 6]\n\n"
@@ -926,6 +971,10 @@ save you from reinventing it every time.</p>
   <li>Forgetting to sort the final result when the brief asks for a specific,
       predictable order.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Add a brand new item straight into the <code>stock</code> dictionary before
+calling <code>restock</code>, and check your function handles a key it has
+never seen in these examples just as well as the ones it has.</p>
 """,
         example=(
             'sales = [("pen", 2), ("book", 1), ("pen", 3)]\n\n'

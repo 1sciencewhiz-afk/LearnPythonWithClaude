@@ -29,10 +29,11 @@ gated behind the one before it, so nobody lands in the middle of a topic:
 | Creators | 16-18 | 10 | classes, inheritance, recursion, higher-order functions, decorators, generators, binary search, data modelling, testing |
 
 **The lesson player.** Each lesson has teaching copy - including a "why this
-matters" explanation of where the idea is actually used, and a "common
-mistakes" list of the errors learners hit most - a worked example, a brief,
-starter code, three progressive hints, a "key terms" box, and a set of checks.
-Learners can *run* their code to see its output, or *check* it to be graded.
+matters" explanation of where the idea is actually used, a "common mistakes"
+list of the errors learners hit most, and a "try it yourself" experiment for
+going beyond the graded brief - a worked example, a brief, starter code, three
+progressive hints, a "key terms" box, and a set of checks. Learners can *run*
+their code to see its output, or *check* it to be graded.
 Failing checks say what was expected and what the code actually did. The
 reference solution unlocks after four attempts, or immediately on passing.
 
@@ -42,7 +43,8 @@ one searchable `/glossary` page (`app/curriculum/schema.py`'s `GlossaryTerm`,
 aggregated by `curriculum.glossary_entries()`). Each entry links back to the
 lesson that first taught it, and each lesson's own "key terms" box links
 forward to its entry, so a learner who has forgotten what a `set` is can look
-it up and jump straight back to the lesson to revise it.
+it up and jump straight back to the lesson to revise it. It also gets its own
+card on the dashboard, right beside "pick up where you left off".
 
 **Progress.** Passing a lesson for the first time awards its XP; resubmitting
 awards none. Levels get progressively longer (100 XP for level 2, then +50 each).

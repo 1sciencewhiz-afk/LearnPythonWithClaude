@@ -50,6 +50,9 @@ def test_lesson_concept_has_teaching_depth(track, lesson):
     """Every lesson should explain why the idea matters, not just the syntax."""
     assert "Why this matters" in lesson.concept
     assert "Common mistakes" in lesson.concept
+    assert "Try it yourself" in lesson.concept, (
+        f"{lesson.slug} has no self-directed experiment beyond the graded brief"
+    )
 
 
 def test_lesson_slugs_are_unique_across_tracks():

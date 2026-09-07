@@ -47,6 +47,10 @@ accident.</p>
   <li>Writing logic in <code>__init__</code> that belongs in a proper method -
       <code>__init__</code> should just set up the starting attributes.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Create two separate <code>BankAccount</code> objects and check that changing
+one's balance never affects the other - each instance keeps its own attributes,
+completely independent of any other instance built from the same class.</p>
 """,
         example=(
             "class Counter:\n"
@@ -195,6 +199,11 @@ only write what is genuinely different in each subclass.</p>
   <li>Forgetting that overriding a method completely replaces it unless you
       explicitly call <code>super().method_name()</code> inside the override.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Add a <code>Motorbike</code> subclass with <code>wheels = 2</code> as well,
+then <code>print()</code> a plain <code>Vehicle</code> instance directly - since
+<code>Vehicle</code> has no <code>__str__</code>, you get the default,
+unhelpful object representation the concept mentioned above.</p>
 """,
         example=(
             "class Shape:\n"
@@ -334,6 +343,10 @@ equivalent loop.</p>
       before, or the other way round - trace through a small example by hand if
       the order feels uncertain.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Call <code>deep_sum([1, [2, [3, [4, [5]]]]])</code> and trace through, by
+hand or on paper, how many times <code>deep_sum</code> calls itself before it
+reaches a plain number it can add directly.</p>
 """,
         example=(
             "def count_down(n):\n"
@@ -431,6 +444,10 @@ writing a separate, nearly-identical loop for every possible rule.</p>
       so <code>key=lambda p: (-p[1], p[0])</code> means "by score descending,
       then by name" rather than something more complicated.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Change <code>rank</code> to sort by name instead of score. Then try sorting
+by score in ascending order instead of descending - it only takes removing one
+minus sign.</p>
 """,
         example=(
             'words = ["banana", "fig", "cherry"]\n\n'
@@ -525,6 +542,11 @@ useful skill.</p>
       <code>wrapper</code>, the function that actually gets called from now on,
       not on the original.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Write a second decorator called <code>loud</code> that upper-cases a
+function's string result, then apply both <code>@counted</code> and
+<code>@loud</code> to the same function and see what order they run in
+depending on which one you write closer to the <code>def</code>.</p>
 """,
         example=(
             "def shout(func):\n"
@@ -649,6 +671,11 @@ shape of problem.</p>
   <li>Calling <code>list()</code> on a generator that never stops, which will
       hang forever trying to collect every value first.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Write an infinite version with no <code>limit</code> and no stopping
+condition, then read just the first five values with a <code>for</code> loop
+and <code>break</code> - never call <code>list()</code> on it, or it will run
+forever trying to collect every value first.</p>
 """,
         example=(
             "def countdown(n):\n"
@@ -746,6 +773,9 @@ that is dramatically faster than the obvious one, and the reasoning behind it
   <li>Forgetting to move <code>low</code> or <code>high</code> on every round,
       which leaves the range unchanged and loops forever.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Add a <code>print(low, high, mid)</code> line inside the loop and watch the
+search range halve, step by step, while searching a 20-item list.</p>
 """,
         example=(
             "def linear_search(items, target):\n"
@@ -870,6 +900,10 @@ data.</p>
   <li>Rounding at the wrong point, e.g. rounding each mark before averaging
       instead of rounding the final average.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Group the same records by <code>student</code> instead of <code>subject</code>
+and see how little of the accumulator pattern actually needs to change, even
+though the question being asked is different.</p>
 """,
         example=(
             "records = [\n"
@@ -982,6 +1016,11 @@ net for code nobody else has already checked for you.</p>
   <li>Fixing the bug the test happened to catch without asking whether the same
       mistake exists anywhere else in the function.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Write an <code>assert</code> that you know will fail on purpose, run it, and
+read the <code>AssertionError</code> Python produces. Knowing what a failing
+test actually looks like makes a real one far less alarming when it happens for
+real.</p>
 """,
         example=(
             "def average(numbers):\n"
@@ -1103,6 +1142,10 @@ what building real software feels like.</p>
       which can leave it changed even when the method should have returned
       <code>False</code> and done nothing.</li>
 </ul>
+<h4>Try it yourself</h4>
+<p>Add a <code>copies_of(title)</code> method that returns how many copies are
+left, reusing the same <code>self.stock.get(title, 0)</code> pattern
+<code>borrow()</code> already relies on.</p>
 """,
         example=(
             "class Library:\n"
